@@ -1,6 +1,14 @@
 # Tweak Calender
 On way to Building Personal Week Planner, the Plain Old Paper planner style. simple tweek.so but free.
 
+## Authpage
+![twiiter-auth-tweak-sounishnath003](https://pbs.twimg.com/media/FHcKznqVQAMI9vr?format=jpg&name=medium)
+
+## Dashboard
+![twiiter-tweet](https://pbs.twimg.com/media/FFOW_ApUcAUSb6Y?format=jpg&name=medium)
+
+
+<br/>
 
 **WAP 🔥**
 - CustomDialogBox
@@ -8,7 +16,8 @@ On way to Building Personal Week Planner, the Plain Old Paper planner style. sim
 - PriorityColorwise Setter
 
 
-## Teachstacks
+
+## Tech stacks
 
 **Frontend👨🏻‍💻**
 - Angular
@@ -20,9 +29,6 @@ On way to Building Personal Week Planner, the Plain Old Paper planner style. sim
 - MongoDB
 
 
-## Dashboard
-#webdevelopment #Coding
-![twiiter-tweet](https://pbs.twimg.com/media/FFOW_ApUcAUSb6Y?format=jpg&name=medium)
 
 Inspired by [tweek.so](https://tweek.so/) 👨🏻‍💻🔥❤️ 
 
