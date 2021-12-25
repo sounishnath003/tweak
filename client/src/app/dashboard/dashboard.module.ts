@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CalenderService } from '../services/calender.service';
+import { WeeklyScheduleService } from '../services/weekly-schedule.service';
+import { ModalModule } from '../shared/modal/modal.module';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { HeaderComponent } from './header/header.component';
@@ -17,7 +19,12 @@ import { WeekCalenderComponent } from './week-calender/week-calender.component';
     AddFormComponent,
     DailyTodoComponent,
   ],
-  providers: [CalenderService],
-  imports: [CommonModule, DashboardRoutingModule, ReactiveFormsModule],
+  providers: [CalenderService, WeeklyScheduleService],
+  imports: [
+    CommonModule,
+    DashboardRoutingModule,
+    ReactiveFormsModule,
+    ModalModule,
+  ],
 })
 export class DashboardModule {}
