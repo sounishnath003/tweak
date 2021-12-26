@@ -8,6 +8,9 @@ import { CalenderService } from '../services/calender.service';
       <app-header (onWeekToggle)="grabDates($event)"></app-header>
       <app-week-calender [weekDays]="dates"></app-week-calender>
     </div>
+    <app-modal id="modal-1">
+      <div class="text-xl">Hi Babe!</div>
+    </app-modal>
   `,
   styleUrls: ['./dashboard.component.css'],
 })
