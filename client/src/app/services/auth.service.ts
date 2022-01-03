@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, map, tap } from 'rxjs';
 
 export interface UserInterface {
   username: string;
@@ -49,5 +49,14 @@ export class AuthService {
           return response.data;
         })
       );
+  }
+
+  logout() {
+    return this.http.get(`/api/auth/logout`, { withCredentials: true }).pipe(
+      tap(() => {
+        localStorage.clear();
+        this.authState$.next({ username: null, isAuthenticated: false });
+      })
+    );
   }
 }

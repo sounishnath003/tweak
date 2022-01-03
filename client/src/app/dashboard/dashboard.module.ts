@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DebounceDoubleClickDirective } from '../directives/debounce-double-click.directive';
 import { CalenderService } from '../services/calender.service';
 import { WeeklyScheduleService } from '../services/weekly-schedule.service';
 import { ModalModule } from '../shared/modal/modal.module';
@@ -18,6 +19,7 @@ import { WeekCalenderComponent } from './week-calender/week-calender.component';
     WeekCalenderComponent,
     AddFormComponent,
     DailyTodoComponent,
+    DebounceDoubleClickDirective,
   ],
   providers: [CalenderService, WeeklyScheduleService],
   imports: [

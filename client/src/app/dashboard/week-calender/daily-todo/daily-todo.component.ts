@@ -13,6 +13,9 @@ import {
       *ngFor="let work of works; let idx = index"
       [attr.data-index]="idx"
       class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
+      appDebounceDoubleClick
+      (debounceClick)="logger($event)"
+      [debounceTime]="300"
     >
       <form
         [formGroup]="editForms[idx]"
@@ -38,6 +41,10 @@ export class DailyTodoComponent implements OnInit {
   editForms: Array<FormGroup> = [];
 
   constructor(readonly weeklyScheduleService: WeeklyScheduleService) {}
+
+  logger(event: any) {
+    console.log('[LOGGER]: double clicked...');
+  }
 
   ngOnInit(): void {
     this.weeklyScheduleService.schedulesByDatesOrder$.subscribe((data) => {

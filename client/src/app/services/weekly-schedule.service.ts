@@ -81,6 +81,9 @@ export class WeeklyScheduleService {
       },
       (error) => {
         console.error(error);
+        this.authService
+          .logout()
+          .subscribe(() => console.log('[Logged out]! State'));
       }
     );
   }
@@ -120,6 +123,9 @@ export class WeeklyScheduleService {
         },
         (error) => {
           console.error(error);
+          this.authService
+            .logout()
+            .subscribe(() => console.log('[Logged out]! State'));
         }
       );
   }
