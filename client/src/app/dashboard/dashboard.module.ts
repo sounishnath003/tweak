@@ -11,6 +11,7 @@ import { HeaderComponent } from './header/header.component';
 import { AddFormComponent } from './week-calender/add-form/add-form.component';
 import { DailyTodoComponent } from './week-calender/daily-todo/daily-todo.component';
 import { WeekCalenderComponent } from './week-calender/week-calender.component';
+import { DialoagboxComponent } from './week-calender/daily-todo/dialoagbox/dialoagbox.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { WeekCalenderComponent } from './week-calender/week-calender.component';
     AddFormComponent,
     DailyTodoComponent,
     DebounceDoubleClickDirective,
+    DialoagboxComponent,
   ],
   providers: [CalenderService, WeeklyScheduleService],
   imports: [

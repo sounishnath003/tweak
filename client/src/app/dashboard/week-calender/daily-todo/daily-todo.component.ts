@@ -14,8 +14,8 @@ import {
       [attr.data-index]="idx"
       class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
       appDebounceDoubleClick
-      (debounceClick)="logger($event)"
-      [debounceTime]="300"
+      (debounceClick)="onToggleModal($event, work)"
+      [debounceTime]="700"
     >
       <form
         [formGroup]="editForms[idx]"
@@ -33,10 +33,8 @@ import {
     </div>
 
     <div *ngIf="isModalOpen">
-      <div class="text-2xl">
-        MODAL Should OPEN!
-        <button (click)="isModalOpen = !isModalOpen">Close</button>
-      </div>
+      <app-dialoagbox [scheduleData]="singleWork" (cancelEvent)="onCancel()">
+      </app-dialoagbox>
     </div>
   `,
   styles: [],
@@ -45,13 +43,18 @@ export class DailyTodoComponent implements OnInit {
   @Input() date!: Date;
   works: Array<ScheduleEditObject> = [];
   editForms: Array<FormGroup> = [];
-
   isModalOpen: boolean = false;
+  singleWork!: ScheduleEditObject;
 
   constructor(readonly weeklyScheduleService: WeeklyScheduleService) {}
 
-  logger(event: any) {
+  onToggleModal(event: any, data: ScheduleEditObject) {
     this.isModalOpen = !this.isModalOpen;
+    this.singleWork = data;
+  }
+
+  onCancel() {
+    this.isModalOpen = false;
   }
 
   ngOnInit(): void {
