@@ -31,19 +31,27 @@ import {
         </div>
       </form>
     </div>
+
+    <div *ngIf="isModalOpen">
+      <div class="text-2xl">
+        MODAL Should OPEN!
+        <button (click)="isModalOpen = !isModalOpen">Close</button>
+      </div>
+    </div>
   `,
   styles: [],
 })
 export class DailyTodoComponent implements OnInit {
   @Input() date!: Date;
   works: Array<ScheduleEditObject> = [];
-
   editForms: Array<FormGroup> = [];
+
+  isModalOpen: boolean = false;
 
   constructor(readonly weeklyScheduleService: WeeklyScheduleService) {}
 
   logger(event: any) {
-    console.log('[LOGGER]: double clicked...');
+    this.isModalOpen = !this.isModalOpen;
   }
 
   ngOnInit(): void {
