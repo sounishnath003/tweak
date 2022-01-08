@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of } from 'rxjs';
 import { AuthService } from './auth.service';
+import { ErrorService } from './error.service';
 
 export interface ScheduleObject {
   _id: string;
@@ -51,6 +52,12 @@ export class WeeklyScheduleService {
   createNewTodo(payload: ScheduleObject) {
     this.http
       .post('/api/schedules/create', payload, { withCredentials: true })
+      .pipe(
+        catchError(() => {
+          this.errorService.createAlert('Something went wrong while saving!');
+          return of([]);
+        })
+      )
       .subscribe((response: any) => {
         this.refreshSubjectState({
           ...payload,
@@ -64,7 +71,8 @@ export class WeeklyScheduleService {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly errorService: ErrorService
   ) {
     this.http.get<any>('/api/schedules/get-schedules/current-week').subscribe(
       (response: any) => {

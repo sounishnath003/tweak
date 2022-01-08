@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first, Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-login',
@@ -84,7 +85,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private readonly authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private errorService: ErrorService
   ) {
     if (this.authService.getAuthState$) {
       this.router.navigate(['', 'dashboard']);
@@ -116,6 +118,7 @@ export class LoginComponent implements OnInit {
       }),
       ({ error }: HttpErrorResponse) => {
         this.error$.next(error.error.message);
+        this.errorService.createAlert('Something went wrong!');
         setTimeout(() => {
           this.error$.next(null);
         }, 1000);
