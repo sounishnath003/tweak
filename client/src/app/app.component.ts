@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { map } from 'rxjs';
 import { ErrorService } from './services/error.service';
 
 @Component({
@@ -14,8 +15,8 @@ export class AppComponent {
   }
 
   getErrorAlert() {
-    this.errorService.error$.subscribe((err) => {
-      this.error = err.cause;
+    this.errorService.error$.pipe(map((err) => err.cause)).subscribe((err) => {
+      this.error = err;
     });
   }
 }

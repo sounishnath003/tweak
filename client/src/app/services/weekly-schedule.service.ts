@@ -88,10 +88,12 @@ export class WeeklyScheduleService {
         this.scheduleByDates$.next(ss);
       },
       (error) => {
-        console.error(error);
         this.authService
           .logout()
           .subscribe(() => console.log('[Logged out]! State'));
+        this.errorService.createAlert(
+          'you are not authenticated! Please login'
+        );
       }
     );
   }
@@ -115,27 +117,31 @@ export class WeeklyScheduleService {
           startDate
         )}/to/${this.formatDate(endDate)}`
       )
-      .subscribe(
-        (response) => {
-          this.works = [];
-          const schedules: Schedules = response.data.schedules;
-          const ss: SchedulesByDate = {};
-          schedules.forEach((work: ScheduleObject) => {
-            work = { ...work, date: new Date(work.date).toDateString() };
-            this.works.push(work);
-            if (!ss[work.date]) {
-              ss[work.date] = [work];
-            } else ss[work.date].push(work);
-          });
-          this.scheduleByDates$.next(ss);
-        },
-        (error) => {
+      .pipe(
+        catchError((error) => {
           console.error(error);
           this.authService
             .logout()
             .subscribe(() => console.log('[Logged out]! State'));
-        }
-      );
+          this.errorService.createAlert(
+            'Something went wrong. Failed to fetch your plans!'
+          );
+          return of([]);
+        })
+      )
+      .subscribe((response) => {  
+        this.works = [];
+        const schedules: Schedules = response.data.schedules;
+        const ss: SchedulesByDate = {};
+        schedules.forEach((work: ScheduleObject) => {
+          work = { ...work, date: new Date(work.date).toDateString() };
+          this.works.push(work);
+          if (!ss[work.date]) {
+            ss[work.date] = [work];
+          } else ss[work.date].push(work);
+        });
+        this.scheduleByDates$.next(ss);
+      });
   }
 
   updateSchedule(payload: ScheduleEditObject) {

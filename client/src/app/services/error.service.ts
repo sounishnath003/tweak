@@ -23,7 +23,7 @@ export class ErrorService {
   }
 
   private async clearError() {
-    await this.delay(() => this.errorSubject.next({ cause: '' }), 1600);
+    await this.delay(() => this.errorSubject.next({ cause: '' }), 2600);
   }
 
   private delay(callback: any, seconds: number) {

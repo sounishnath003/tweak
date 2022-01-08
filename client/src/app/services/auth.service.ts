@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, of, tap } from 'rxjs';
+import { ErrorService } from './error.service';
 
 export interface UserInterface {
   username: string;
@@ -16,7 +17,10 @@ export class AuthService {
     isAuthenticated: boolean | null;
   }>;
 
-  constructor(private readonly http: HttpClient) {
+  constructor(
+    private readonly http: HttpClient,
+    private readonly errorService: ErrorService
+  ) {
     this.authState$ = new BehaviorSubject<{
       username: string | null;
       isAuthenticated: boolean | null;
@@ -34,6 +38,12 @@ export class AuthService {
     return this.http
       .post(`/api/auth/login`, payload, { withCredentials: true })
       .pipe(
+        catchError((error) => {
+          this.errorService.createAlert(
+            'Sorry! Cannot able to authenticatet you. Please try again after sometime!'
+          );
+          return of([]);
+        }),
         map((response: any) => {
           localStorage.setItem(
             'authState',
