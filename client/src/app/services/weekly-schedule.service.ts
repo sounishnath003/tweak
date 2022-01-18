@@ -129,7 +129,7 @@ export class WeeklyScheduleService {
           return of([]);
         })
       )
-      .subscribe((response) => {  
+      .subscribe((response) => {
         this.works = [];
         const schedules: Schedules = response.data.schedules;
         const ss: SchedulesByDate = {};
@@ -164,6 +164,8 @@ export class WeeklyScheduleService {
             ss[work.date] = [work];
           } else ss[work.date].push(work);
         });
+        console.log(ss);
+
         this.scheduleByDates$.next(ss);
         console.log(`[UPDATED]: ${JSON.stringify(payload)}`);
       });

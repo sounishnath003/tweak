@@ -40,9 +40,10 @@ export class AuthService {
       .pipe(
         catchError((error) => {
           this.errorService.createAlert(
-            'Sorry! Cannot able to authenticatet you. Please try again after sometime!'
+            error.error.error.message ||
+              'Sorry! Cannot able to authenticatet you. Please try again after sometime!'
           );
-          return of([]);
+          return of(error);
         }),
         map((response: any) => {
           localStorage.setItem(
@@ -63,6 +64,10 @@ export class AuthService {
 
   logout() {
     return this.http.get(`/api/auth/logout`, { withCredentials: true }).pipe(
+      catchError(() => {
+        localStorage.clear();
+        return of([]);
+      }),
       tap(() => {
         localStorage.clear();
         this.authState$.next({ username: null, isAuthenticated: false });

@@ -15,7 +15,7 @@ import {
       class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
       appDebounceDoubleClick
       (debounceClick)="onToggleModal($event, work)"
-      [debounceTime]="700"
+      [debounceTime]="600"
     >
       <form
         [formGroup]="editForms[idx]"
@@ -33,7 +33,11 @@ import {
     </div>
 
     <div *ngIf="isModalOpen">
-      <app-dialoagbox [scheduleData]="singleWork" (cancelEvent)="onCancel()">
+      <app-dialoagbox
+        [scheduleData]="singleWork"
+        (cancelEvent)="onCancel()"
+        (saveEvent)="onModify($event)"
+      >
       </app-dialoagbox>
     </div>
   `,
@@ -51,6 +55,11 @@ export class DailyTodoComponent implements OnInit {
   onToggleModal(event: any, data: ScheduleEditObject) {
     this.isModalOpen = !this.isModalOpen;
     this.singleWork = data;
+  }
+
+  onModify(payload: any) {
+    console.log(payload);
+    this.isModalOpen = false;
   }
 
   onCancel() {
