@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { DebounceDoubleClickDirective } from '../directives/debounce-double-click.directive';
 import { CalenderService } from '../services/calender.service';
 import { WeeklyScheduleService } from '../services/weekly-schedule.service';
@@ -10,8 +14,8 @@ import { DashboardComponent } from './dashboard.component';
 import { HeaderComponent } from './header/header.component';
 import { AddFormComponent } from './week-calender/add-form/add-form.component';
 import { DailyTodoComponent } from './week-calender/daily-todo/daily-todo.component';
-import { WeekCalenderComponent } from './week-calender/week-calender.component';
 import { DialoagboxComponent } from './week-calender/daily-todo/dialoagbox/dialoagbox.component';
+import { WeekCalenderComponent } from './week-calender/week-calender.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +33,10 @@ import { DialoagboxComponent } from './week-calender/daily-todo/dialoagbox/dialo
     DashboardRoutingModule,
     ReactiveFormsModule,
     ModalModule,
+    MatDialogModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
   ],
 })
 export class DashboardModule {}

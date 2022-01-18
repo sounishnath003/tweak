@@ -1,10 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   ScheduleEditObject,
   ScheduleObject,
   WeeklyScheduleService,
 } from 'src/app/services/weekly-schedule.service';
+import { DialoagboxComponent } from './dialoagbox/dialoagbox.component';
 
 @Component({
   selector: 'app-daily-todo',
@@ -13,9 +15,7 @@ import {
       *ngFor="let work of works; let idx = index"
       [attr.data-index]="idx"
       class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
-      appDebounceDoubleClick
-      (debounceClick)="onToggleModal($event, work)"
-      [debounceTime]="600"
+      (click)="onToggleModal($event, work)"
     >
       <form
         [formGroup]="editForms[idx]"
@@ -31,15 +31,6 @@ import {
         </div>
       </form>
     </div>
-
-    <div *ngIf="isModalOpen">
-      <app-dialoagbox
-        [scheduleData]="singleWork"
-        (cancelEvent)="onCancel()"
-        (saveEvent)="onModify($event)"
-      >
-      </app-dialoagbox>
-    </div>
   `,
   styles: [],
 })
@@ -47,24 +38,27 @@ export class DailyTodoComponent implements OnInit {
   @Input() date!: Date;
   works: Array<ScheduleEditObject> = [];
   editForms: Array<FormGroup> = [];
-  isModalOpen: boolean = false;
-  singleWork!: ScheduleEditObject;
 
-  constructor(readonly weeklyScheduleService: WeeklyScheduleService) {}
+  constructor(
+    readonly weeklyScheduleService: WeeklyScheduleService,
+    public dialog: MatDialog
+  ) {}
 
   onToggleModal(event: any, data: ScheduleEditObject) {
-    this.isModalOpen = !this.isModalOpen;
-    this.singleWork = data;
+    const dialogRef: MatDialogRef<DialoagboxComponent, any> = this.dialog.open(
+      DialoagboxComponent,
+      {
+        data: { payload: data },
+      }
+    );
+    dialogRef.afterClosed().subscribe((_data) => console.log(_data));
   }
 
   onModify(payload: any) {
     console.log(payload);
-    this.isModalOpen = false;
   }
 
-  onCancel() {
-    this.isModalOpen = false;
-  }
+  onCancel() {}
 
   ngOnInit(): void {
     this.weeklyScheduleService.schedulesByDatesOrder$.subscribe((data) => {
