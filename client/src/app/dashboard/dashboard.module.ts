@@ -16,6 +16,8 @@ import { AddFormComponent } from './week-calender/add-form/add-form.component';
 import { DailyTodoComponent } from './week-calender/daily-todo/daily-todo.component';
 import { DialoagboxComponent } from './week-calender/daily-todo/dialoagbox/dialoagbox.component';
 import { WeekCalenderComponent } from './week-calender/week-calender.component';
+import {MatDatepickerModule} from '@angular/material/datepicker'
+import {MatNativeDateModule} from '@angular/material/core'
 
 @NgModule({
   declarations: [
@@ -37,6 +39,8 @@ import { WeekCalenderComponent } from './week-calender/week-calender.component';
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
   ],
 })
 export class DashboardModule {}

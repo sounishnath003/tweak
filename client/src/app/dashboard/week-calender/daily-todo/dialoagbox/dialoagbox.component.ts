@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   ScheduleObject,
@@ -8,12 +9,31 @@ import {
 @Component({
   selector: 'app-dialoagbox',
   template: `
-    <div>
-      <h1 mat-dialog-title>{{ scheduleData.date }}</h1>
+    <form [formGroup]="formGroup">
+      <div>
+        <mat-form-field>
+          <mat-label> Choose date </mat-label>
+          <input
+            formControlName="date"
+            [value]="scheduleData.date | date: 'YYYY-MM-dd'"
+            matInput
+            [matDatepicker]="datepicker"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="datepicker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #datepicker></mat-datepicker>
+        </mat-form-field>
+      </div>
       <div mat-dialog-content>
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" class="min-w-full">
           <mat-label> Your Todo </mat-label>
-          <input matInput [value]="scheduleData.todo" />
+          <textarea
+            formControlName="todo"
+            matInput
+            [value]="scheduleData.todo"
+          ></textarea>
         </mat-form-field>
       </div>
       <div mat-dialog-actions class="flex justify-end">
@@ -22,14 +42,14 @@ import {
         </button>
         <button
           mat-button
-          mat-dialog-close="true"
+          [mat-dialog-close]="formGroup.value"
           cdkFocusInitial
           color="primary"
         >
           Save
         </button>
       </div>
-    </div>
+    </form>
   `,
   styleUrls: ['./dialoagbox.component.css'],
 })
@@ -38,6 +58,16 @@ export class DialoagboxComponent implements OnInit {
   @Output() cancelEvent: EventEmitter<HTMLButtonElement>;
   @Output() saveEvent: EventEmitter<ScheduleObject>;
 
+  formGroup: FormGroup = new FormGroup({
+    _id: new FormControl('', [Validators.requiredTrue]),
+    __v: new FormControl('', [Validators.requiredTrue]),
+    todo: new FormControl('', [Validators.requiredTrue]),
+    date: new FormControl('', [Validators.requiredTrue]),
+    colorCode: new FormControl('', [Validators.requiredTrue]),
+    finished: new FormControl('', [Validators.requiredTrue]),
+    username: new FormControl('', [Validators.requiredTrue]),
+  });
+
   constructor(
     private readonly weekScheduleService: WeeklyScheduleService,
     @Inject(MAT_DIALOG_DATA) dialogData: { payload: ScheduleObject }
@@ -45,6 +75,7 @@ export class DialoagboxComponent implements OnInit {
     this.cancelEvent = new EventEmitter<HTMLButtonElement>();
     this.saveEvent = new EventEmitter<ScheduleObject>();
     this.scheduleData = dialogData.payload;
+    this.formGroup.setValue({ ...this.scheduleData });
   }
 
   ngOnInit(): void {}

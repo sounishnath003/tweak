@@ -48,17 +48,19 @@ export class DailyTodoComponent implements OnInit {
     const dialogRef: MatDialogRef<DialoagboxComponent, any> = this.dialog.open(
       DialoagboxComponent,
       {
+        width: '600px',
         data: { payload: data },
       }
     );
-    dialogRef.afterClosed().subscribe((_data) => console.log(_data));
+    dialogRef.afterClosed().subscribe((_data: boolean | ScheduleObject) => {
+      if (typeof _data === 'object') {
+        this.weeklyScheduleService.updateSchedule(_data);
+        this.weeklyScheduleService.schedulesByDatesOrder$.subscribe((data) => {
+          /** all good */
+        });
+      }
+    });
   }
-
-  onModify(payload: any) {
-    console.log(payload);
-  }
-
-  onCancel() {}
 
   ngOnInit(): void {
     this.weeklyScheduleService.schedulesByDatesOrder$.subscribe((data) => {
