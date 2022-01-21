@@ -15,7 +15,8 @@ import { DialoagboxComponent } from './dialoagbox/dialoagbox.component';
       *ngFor="let work of works; let idx = index"
       [attr.data-index]="idx"
       class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
-      (click)="onToggleModal($event, work)"
+      appDebounceDoubleClick
+      (onDoubleClick)="onToggleModal($event, work)"
     >
       <form
         [formGroup]="editForms[idx]"

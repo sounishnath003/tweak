@@ -19,6 +19,8 @@ import { WeeklyScheduleService } from 'src/app/services/weekly-schedule.service'
         *ngIf="index === 0"
         [class]="getStyle1(index)"
         placeholder="Add your today's action!"
+        autocomplete="false"
+        aria-autocomplete="none"
       />
     </form>
   `,

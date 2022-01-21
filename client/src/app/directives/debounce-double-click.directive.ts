@@ -2,40 +2,37 @@ import {
   Directive,
   EventEmitter,
   HostListener,
-  Input,
   OnDestroy,
+  OnInit,
   Output,
 } from '@angular/core';
-import { debounceTime, Subject, Subscription } from 'rxjs';
+import { buffer, debounceTime, filter, map, Subject } from 'rxjs';
 
 @Directive({
   selector: '[appDebounceDoubleClick]',
 })
-export class DebounceDoubleClickDirective implements OnDestroy {
-  @Input()
-  debounceTime = 500;
+export class DebounceDoubleClickDirective implements OnInit, OnDestroy {
+  private clicks$ = new Subject<MouseEvent>();
 
   @Output()
-  debounceClick = new EventEmitter();
+  onDoubleClick = new EventEmitter<MouseEvent>();
 
-  private clicks = new Subject();
-  private subscription: Subscription;
-
-  constructor() {
-    this.subscription = this.clicks
-      .pipe(debounceTime(this.debounceTime))
-      .subscribe((event) => this.debounceClick.emit(event));
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  ngOnInit(): void {
+    this.clicks$
+      .pipe(
+        buffer(this.clicks$.pipe(debounceTime(250))),
+        filter((lit) => lit.length === 2),
+        map((e) => e[1])
+      )
+      .subscribe(this.onDoubleClick);
   }
 
   @HostListener('click', ['$event'])
-  clickEventTrigger(event: any) {
-    event.preventDefault();
-    event.stopPropagation();
+  onClicked(event: MouseEvent) {
+    this.clicks$.next(event);
+  }
 
-    this.clicks.next(event);
+  ngOnDestroy(): void {
+    this.clicks$.complete();
   }
 }
