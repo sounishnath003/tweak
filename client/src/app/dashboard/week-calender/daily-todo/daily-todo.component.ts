@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 import {
   ScheduleEditObject,
   ScheduleObject,
@@ -35,9 +36,10 @@ import { DialoagboxComponent } from './dialoagbox/dialoagbox.component';
   `,
   styles: [],
 })
-export class DailyTodoComponent implements OnInit {
+export class DailyTodoComponent implements OnInit, OnDestroy {
   @Input() date!: Date;
   works: Array<ScheduleEditObject> = [];
+  worksSubscription: Subscription = new Subscription();
   editForms: Array<FormGroup> = [];
 
   constructor(
@@ -56,7 +58,7 @@ export class DailyTodoComponent implements OnInit {
     dialogRef.afterClosed().subscribe((_data: boolean | ScheduleObject) => {
       if (typeof _data === 'object') {
         this.weeklyScheduleService.updateSchedule(_data);
-        this.weeklyScheduleService.schedulesByDatesOrder$.subscribe((data) => {
+        this.weeklyScheduleService.scheduleByDates$.subscribe((data) => {
           /** all good */
         });
       }
@@ -64,17 +66,22 @@ export class DailyTodoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.weeklyScheduleService.schedulesByDatesOrder$.subscribe((data) => {
-      for (const d in data) {
-        if (d === this.date.toDateString())
-          this.works = this.weeklyScheduleService.getWorksByDate(
-            this.date
-          ) as Array<ScheduleEditObject>;
-      }
-      this.works.forEach((work) => {
-        this.editForms.push(this.createNewForm(work));
+    this.worksSubscription =
+      this.weeklyScheduleService.scheduleByDates$.subscribe((data) => {
+        for (const d in data) {
+          if (d === this.date.toDateString())
+            this.works = this.weeklyScheduleService.getWorksByDate(
+              this.date
+            ) as Array<ScheduleEditObject>;
+        }
+        this.works.forEach((work) => {
+          this.editForms.push(this.createNewForm(work));
+        });
       });
-    });
+  }
+
+  ngOnDestroy(): void {
+    this.worksSubscription.unsubscribe();
   }
 
   convertEqualToDate(work: ScheduleObject) {
@@ -84,7 +91,7 @@ export class DailyTodoComponent implements OnInit {
   onEditSubmit(editForm: FormGroup) {
     const payload: ScheduleEditObject = editForm.value;
     this.weeklyScheduleService.updateSchedule(payload);
-    this.weeklyScheduleService.schedulesByDatesOrder$.subscribe((data) => {
+    this.weeklyScheduleService.scheduleByDates$.subscribe((data) => {
       /** all good */
     });
   }

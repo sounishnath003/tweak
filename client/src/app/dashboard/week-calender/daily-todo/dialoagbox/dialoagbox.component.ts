@@ -12,11 +12,12 @@ import {
     <form [formGroup]="formGroup">
       <div>
         <mat-form-field>
-          <mat-label> Choose date </mat-label>
+          <mat-label> {{ scheduleData.date | date: 'dd/MM/YYYY' }} </mat-label>
           <input
             formControlName="date"
-            [value]="scheduleData.date | date: 'YYYY-MM-dd'"
+            [value]="scheduleData.date | date: 'dd/MM/YYYY'"
             matInput
+            [matDatepickerFilter]="checkNotToProvidePreviousWeek"
             [matDatepicker]="datepicker"
           />
           <mat-datepicker-toggle
@@ -82,6 +83,14 @@ export class DialoagboxComponent implements OnInit {
 
   onCancel() {
     this.cancelEvent.emit();
+  }
+
+  checkNotToProvidePreviousWeek(d: Date | null) {
+    const thresoldDate: Date = new Date(
+      new Date().setDate(new Date().getDate() - new Date().getDay())
+    );
+    const date = d || new Date();
+    return date >= thresoldDate;
   }
 
   onSave() {

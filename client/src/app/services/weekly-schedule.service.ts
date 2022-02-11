@@ -4,6 +4,11 @@ import { BehaviorSubject, catchError, Observable, of } from 'rxjs';
 import { AuthService } from './auth.service';
 import { ErrorService } from './error.service';
 
+enum RefresherType {
+  'NEW_DATA' = '[NEW_DATA]',
+  'REFRESH_STATE' = '[REFRESH_STATE]',
+}
+
 export interface ScheduleObject {
   _id: string;
   __v?: number;
@@ -26,7 +31,7 @@ export type SchedulesByDate = { [key: string]: Schedules };
   providedIn: 'root',
 })
 export class WeeklyScheduleService {
-  private scheduleByDates$: BehaviorSubject<SchedulesByDate> =
+  scheduleByDates$: BehaviorSubject<SchedulesByDate> =
     new BehaviorSubject<SchedulesByDate>({});
   private works: Schedules = [];
 
@@ -38,15 +43,43 @@ export class WeeklyScheduleService {
     return this.works.filter((work) => work.date === date.toDateString());
   }
 
-  private refreshSubjectState(payload: ScheduleObject) {
-    this.works.push(payload);
-    const ss: SchedulesByDate = {};
-    this.works.forEach((work: ScheduleObject) => {
-      if (work.date in ss === false) {
-        ss[work.date] = [{ ...work }];
-      } else ss[work.date].push(work);
-    });
-    this.scheduleByDates$.next(ss);
+  private refreshSubjectState(
+    rtype: RefresherType,
+    payload: ScheduleObject | Schedules
+  ) {
+    console.log(rtype);
+    switch (rtype) {
+      case RefresherType.NEW_DATA:
+        {
+          this.works.push({ ...payload } as ScheduleObject);
+          const ss: SchedulesByDate = {};
+          this.works.forEach((work: ScheduleObject) => {
+            if (work.date in ss === false) {
+              ss[work.date] = [{ ...work }];
+            } else ss[work.date].push(work);
+          });
+          this.scheduleByDates$.next({ ...ss });
+        }
+        break;
+
+      case RefresherType.REFRESH_STATE:
+        {
+          this.works = [];
+          const ss: SchedulesByDate = {};
+          [...(payload as Schedules)].forEach((work: ScheduleObject) => {
+            work = { ...work, date: new Date(work.date).toDateString() };
+            this.works.push(work);
+            if (!ss[work.date]) {
+              ss[work.date] = [work];
+            } else ss[work.date].push(work);
+          });
+          this.scheduleByDates$.next(ss);
+        }
+        break;
+
+      default:
+        break;
+    }
   }
 
   createNewTodo(payload: ScheduleObject) {
@@ -59,7 +92,7 @@ export class WeeklyScheduleService {
         })
       )
       .subscribe((response: any) => {
-        this.refreshSubjectState({
+        this.refreshSubjectState(RefresherType.NEW_DATA, {
           ...payload,
           __v: 0,
           _id: response.data._id,
@@ -74,28 +107,20 @@ export class WeeklyScheduleService {
     private readonly authService: AuthService,
     private readonly errorService: ErrorService
   ) {
-    this.http.get<any>('/api/schedules/get-schedules/current-week').subscribe(
-      (response: any) => {
+    this.http.get<any>('/api/schedules/get-schedules/current-week').subscribe({
+      next: (response: any) => {
         const schedules: Schedules = response.data.schedule;
-        const ss: SchedulesByDate = {};
-        schedules.forEach((work: ScheduleObject) => {
-          work = { ...work, date: new Date(work.date).toDateString() };
-          this.works.push(work);
-          if (!ss[work.date]) {
-            ss[work.date] = [work];
-          } else ss[work.date].push(work);
-        });
-        this.scheduleByDates$.next(ss);
+        this.refreshSubjectState(RefresherType.REFRESH_STATE, [...schedules]);
       },
-      (error) => {
+      error: (error) => {
         this.authService
           .logout()
           .subscribe(() => console.log('[Logged out]! State'));
         this.errorService.createAlert(
           'you are not authenticated! Please login'
         );
-      }
-    );
+      },
+    });
   }
 
   private formatDate(date: Date) {
@@ -150,24 +175,42 @@ export class WeeklyScheduleService {
         withCredentials: true,
       })
       .subscribe((response) => {
-        const workObjectIndex = this.works.findIndex(
-          (_work) => JSON.stringify(_work) === JSON.stringify(payload)
-        );
-        this.works[workObjectIndex] = { ...payload };
-        const worksTemp = this.works;
-        this.works = [];
-        const ss: SchedulesByDate = {};
-        worksTemp.forEach((work: ScheduleObject) => {
-          work = { ...work, date: new Date(work.date).toDateString() };
-          this.works.push(work);
-          if (!ss[work.date]) {
-            ss[work.date] = [work];
-          } else ss[work.date].push(work);
-        });
-        console.log(ss);
+        // const workObjectIndex = this.works.findIndex(
+        //   (_work) => _work._id === payload._id
+        // );
+        // this.works[workObjectIndex] = { ...payload };
+        // const worksTemp = [...this.works];
+        // this.works = [];
+        // const ss: SchedulesByDate = {};
+        // worksTemp.forEach((work: ScheduleObject) => {
+        //   work = { ...work, date: new Date(work.date).toDateString() };
+        //   this.works.push(work);
+        //   if (!ss[work.date]) {
+        //     ss[work.date] = [{ ...work }];
+        //   } else ss[work.date].push({ ...work });
+        // });
+        // console.log(ss);
 
-        this.scheduleByDates$.next(ss);
+        // this.scheduleByDates$.next({ ...ss });
+        this.getUpdatedDataForCurrentWeek();
         console.log(`[UPDATED]: ${JSON.stringify(payload)}`);
       });
+  }
+
+  getUpdatedDataForCurrentWeek() {
+    this.http.get<any>('/api/schedules/get-schedules/current-week').subscribe({
+      next: (response: any) => {
+        const schedules: Schedules = response.data.schedule;
+        this.refreshSubjectState(RefresherType.REFRESH_STATE, [...schedules]);
+      },
+      error: (error) => {
+        this.authService
+          .logout()
+          .subscribe(() => console.log('[Logged out]! State'));
+        this.errorService.createAlert(
+          'you are not authenticated! Please login'
+        );
+      },
+    });
   }
 }
