@@ -3,9 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -29,25 +29,34 @@ export class ScheduleController {
   }
 
   @Get('find-all')
-  findAll(@GetUser() user: User) {
-    return this.scheduleService.findAll(user);
+  async findAll(@GetUser() user: User) {
+    return await this.scheduleService.findAll(user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.scheduleService.findOne(+id);
+  @Get('find-by-week')
+  async findByCurrentWeek(
+    @Query('from') from: Date,
+    @Query('to') to: Date,
+    @GetUser() user: User,
+  ) {
+    return await this.scheduleService.findByWeek(user, from, to);
   }
 
-  @Patch(':id')
+  @Get()
+  async findOne(@Query('id') id: string) {
+    return await this.scheduleService.findOne(id);
+  }
+
+  @Patch('update')
   update(
-    @Param('id') id: string,
+    @Query('id') id: string,
     @Body() updateScheduleDto: UpdateScheduleDto,
   ) {
-    return this.scheduleService.update(+id, updateScheduleDto);
+    return this.scheduleService.update(id, updateScheduleDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.scheduleService.remove(+id);
+  @Delete('delete')
+  remove(@Query('id') id: string) {
+    return this.scheduleService.remove(id);
   }
 }

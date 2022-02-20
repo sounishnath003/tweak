@@ -24,21 +24,77 @@ export class ScheduleService {
   }
 
   async findAll(user: User) {
-    return await this.scheduleModel.find({ username: user.username }).sort([
-      ['date', 'desc'],
-      ['createdAt', 'desc'],
-    ]).exec();
+    const schedules = await this.scheduleModel
+      .find({ username: user.username })
+      .sort([
+        ['date', 'desc'],
+        ['createdAt', 'desc'],
+      ])
+      .exec();
+
+    return { data: await this.generateScheduleRecordByDates(schedules) };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} schedule`;
+  async findByWeek(user: User, from: Date, to: Date) {
+    const schedules = await this.scheduleModel
+      .where({
+        username: user.username,
+        date: { $gte: from, $lte: to },
+      })
+      .sort([['date', 'desc']]);
+
+    return { data: await this.generateScheduleRecordByDates(schedules) };
   }
 
-  update(id: number, updateScheduleDto: UpdateScheduleDto) {
-    return `This action updates a #${id} schedule`;
+  async findOne(id: string) {
+    return { data: await this.scheduleModel.findById(id) };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} schedule`;
+  async update(id: string, updateScheduleDto: UpdateScheduleDto) {
+    await this.scheduleModel.findOneAndUpdate({ _id: id }, updateScheduleDto);
+    return `schedule ${id} has been updated`;
+  }
+
+  async remove(id: string) {
+    await this.scheduleModel.findByIdAndRemove(id);
+    return `schedule ${id} has been removed!`;
+  }
+
+  // PRIVATE METHODS
+
+  private async generateScheduleRecordByDates(
+    schedules: (import('mongoose').Document<unknown, any, ScheduleDocument> &
+      User &
+      Document & { _id: import('mongoose').Types.ObjectId })[],
+  ) {
+    /**
+     * create a HashMap
+     *  data: [
+     *   {
+     *     date: "2022-02-23",
+     *     schedules: [
+     *       {...},
+     *       {...},
+     *       {...},
+     *     ]
+     *   }
+     * ]
+     */
+    const data: Record<string, Array<Schedule>> = {};
+    schedules.forEach((schedule: any) => {
+      const date = schedule.date.toDateString();
+      if (date in data) {
+        data[date].push(schedule);
+      } else {
+        data[date] = [schedule];
+      }
+    });
+
+    let payload = [];
+    Object.keys(data).forEach((key: string) => {
+      payload.push({ date: key, schedules: [...data[key]] });
+    });
+
+    return payload;
   }
 }
