@@ -1,15 +1,33 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User } from 'src/auth/schema/user.schema';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
+import { Schedule, ScheduleDocument } from './schema/schedule.schema';
 
 @Injectable()
 export class ScheduleService {
-  create(createScheduleDto: CreateScheduleDto) {
-    return 'This action adds a new schedule';
+  constructor(
+    @InjectModel(Schedule.name)
+    private readonly scheduleModel: Model<ScheduleDocument>,
+  ) {}
+
+  async create(createScheduleDto: CreateScheduleDto): Promise<string | Error> {
+    try {
+      const scheduleDoc = new this.scheduleModel(createScheduleDto);
+      await scheduleDoc.save();
+      return 'schedule created!';
+    } catch (error) {
+      return error;
+    }
   }
 
-  findAll() {
-    return `This action returns all schedule`;
+  async findAll(user: User) {
+    return await this.scheduleModel.find({ username: user.username }).sort([
+      ['date', 'desc'],
+      ['createdAt', 'desc'],
+    ]).exec();
   }
 
   findOne(id: number) {
