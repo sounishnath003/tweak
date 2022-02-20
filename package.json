@@ -115,8 +115,8 @@
   "devDependencies": {},
   "scripts": {
     "dev": "concurrently -m 100 \"npm run start:client\" \"npm run start:server\"",
-    "start:client": "cd client && npm run start",
-    "start:server": "cd serverr && npm run dev"
+    "start:client": "cd tweak-client && npm run start",
+    "start:server": "cd tweak-backend && npm run start:dev"
   },
   "repository": {
     "type": "git",

@@ -36,7 +36,7 @@ export class AuthService {
 
   login(payload: Partial<UserInterface>) {
     return this.http
-      .post(`/api/auth/login`, payload, { withCredentials: true })
+      .post(`/api/auth/sign-in`, payload, { withCredentials: true })
       .pipe(
         catchError((error) => {
           this.errorService.createAlert(
