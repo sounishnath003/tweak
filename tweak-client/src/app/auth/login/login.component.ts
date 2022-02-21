@@ -5,7 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -70,6 +70,7 @@ import { AuthService } from '../auth.service';
         </div>
 
         <button
+          [disabled]="form.invalid"
           mat-flat-button
           [color]="isSignup ? 'accent' : 'primary'"
           (click)="isSignup ? onSignup() : onSignin()"
@@ -108,7 +109,11 @@ export class LoginComponent implements OnInit {
 
   errors: Array<string> | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.form = new FormGroup({
       username: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required]),
@@ -126,10 +131,11 @@ export class LoginComponent implements OnInit {
     const { username, password } = this.form.value;
     this.authService.signinWithUsernamePassword(username, password).subscribe({
       next: (response) => {
-        this.router.navigate(['dashboard']);
+        const { redirectTo } = this.route.snapshot.queryParams;
+        this.router.navigate([redirectTo]);
       },
       error: (error) => {
-        const e = error.error.message;
+        const e = error.message;
         if (typeof e === 'string') {
           this.errors = [e];
         } else {

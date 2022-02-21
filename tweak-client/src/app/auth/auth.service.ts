@@ -1,14 +1,37 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, shareReplay, Subject, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  Observable,
+  shareReplay,
+  tap,
+} from 'rxjs';
+import { handleError } from 'src/shared/utils/error-handle.utils';
+
+export type AuthState = { accessToken: string; isAuthenticated: boolean };
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  user$ = new Subject();
-  isAuthenticated$ = new BehaviorSubject<boolean>(false);
-  constructor(private http: HttpClient) {}
+  private userSubject: BehaviorSubject<AuthState>;
+  public user$: Observable<AuthState>;
+
+  constructor(private http: HttpClient) {
+    this.userSubject = new BehaviorSubject<AuthState>(
+      JSON.parse(
+        localStorage.getItem('user') ||
+          JSON.stringify({ accesToken: '', isAuthenticated: false })
+      )
+    );
+
+    this.user$ = this.userSubject.asObservable();
+  }
+
+  public get userAuthState(): AuthState {
+    return this.userSubject.value;
+  }
 
   signinWithUsernamePassword(username: string, password: string) {
     return this.http
@@ -22,9 +45,15 @@ export class AuthService {
       )
       .pipe(
         shareReplay(),
-        tap((data: any) => {
-          this.user$.next({ username, accessToken: data.accessToken });
-          this.isAuthenticated$.next(true);
+        catchError(handleError),
+        tap((response: any) => {
+          const authState: AuthState = {
+            accessToken: response.accessToken,
+            isAuthenticated: true,
+          };
+          localStorage.setItem('user', JSON.stringify(authState));
+          this.userSubject.next(authState);
+          return response;
         })
       );
   }
