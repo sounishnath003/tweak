@@ -1,9 +1,4 @@
-import {
-  IsNotEmpty,
-  IsNumberString,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CreateScheduleDto {
   @IsNotEmpty()
@@ -15,8 +10,8 @@ export class CreateScheduleDto {
   date: string;
 
   @IsNotEmpty()
-  @IsNumberString({})
-  colorCode: number;
+  @IsString()
+  colorCode: string;
   finished: boolean;
   username: string;
 }

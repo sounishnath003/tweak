@@ -13,11 +13,13 @@ export class ScheduleService {
     private readonly scheduleModel: Model<ScheduleDocument>,
   ) {}
 
-  async create(createScheduleDto: CreateScheduleDto): Promise<string | Error> {
+  async create(
+    createScheduleDto: CreateScheduleDto,
+  ): Promise<{ data: string } | Error> {
     try {
       const scheduleDoc = new this.scheduleModel(createScheduleDto);
       await scheduleDoc.save();
-      return 'schedule created!';
+      return { data: 'schedule created!' };
     } catch (error) {
       return error;
     }
@@ -55,12 +57,12 @@ export class ScheduleService {
 
   async update(id: string, updateScheduleDto: UpdateScheduleDto) {
     await this.scheduleModel.findOneAndUpdate({ _id: id }, updateScheduleDto);
-    return `schedule ${id} has been updated`;
+    return { data: `schedule ${id} has been updated` };
   }
 
   async remove(id: string) {
     await this.scheduleModel.findByIdAndRemove(id);
-    return `schedule ${id} has been removed!`;
+    return { data: `schedule ${id} has been removed!` };
   }
 
   // PRIVATE METHODS

@@ -11,7 +11,7 @@ export interface Schedule {
   _id: string;
   username: string;
   finished: boolean;
-  colorCode: number;
+  colorCode: string;
   date: Date;
   todo: string;
   createdAt: Date;

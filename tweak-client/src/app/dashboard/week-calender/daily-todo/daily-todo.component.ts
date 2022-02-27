@@ -12,7 +12,7 @@ import { Schedule } from 'src/app/shared/utils/types.utils';
       class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
       appDebounceDoubleClick
     >
-      <form [formGroup]="editForms[idx]">
+      <form [formGroup]="editForms[idx]" (ngSubmit)="onEdited(editForms[idx])">
         <div>
           <input
             formControlName="todo"
@@ -59,5 +59,13 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
 
     editForm.setValue({ ...work });
     return editForm;
+  }
+
+  onEdited(form: FormGroup) {
+    this.weeklyScheduleService
+      .updateSchedule({ ...form.value })
+      .subscribe(() => {
+        console.log(`[UPDATE]: Schedule has been updated `);
+      });
   }
 }

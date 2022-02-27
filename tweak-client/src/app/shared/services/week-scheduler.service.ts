@@ -3,9 +3,11 @@ import { Injectable, OnDestroy } from '@angular/core';
 import {
   BehaviorSubject,
   Observable,
+  share,
   shareReplay,
   Subject,
   Subscription,
+  tap,
 } from 'rxjs';
 import { Schedule, WeeklySchedulesInterface } from '../utils/types.utils';
 import { CalendarService } from './calendar.service';
@@ -67,8 +69,27 @@ export class WeekSchedulerService implements OnDestroy {
             this.weekScheduleMap[object.date] = [...object.schedules];
           });
           this.weekScheduleMapSubject.next(this.weekScheduleMap);
+          console.log(`[Refreshed]: Schedules Refreshed!`);
         }
       });
+  }
+
+  updateSchedule(updatedSchedule: Partial<Schedule>) {
+    const { _id, colorCode, ...payload } = updatedSchedule;
+    return this.http
+      .patch(
+        `/api/schedules/update`,
+        { colorCode: String(colorCode), ...payload },
+        {
+          params: { id: _id as string },
+        }
+      )
+      .pipe(
+        share(),
+        tap(() => {
+          this.refreshState();
+        })
+      );
   }
 
   private getStartAndEndDate() {
