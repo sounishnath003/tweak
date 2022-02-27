@@ -7,9 +7,13 @@ import {
   shareReplay,
   tap,
 } from 'rxjs';
-import { handleError } from 'src/shared/utils/error-handle.utils';
+import { handleError } from 'src/app/shared/utils/error-handle.utils';
 
-export type AuthState = { accessToken: string; isAuthenticated: boolean };
+export type AuthState = {
+  accessToken: string;
+  isAuthenticated: boolean;
+  username: string;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +26,11 @@ export class AuthService {
     this.userSubject = new BehaviorSubject<AuthState>(
       JSON.parse(
         localStorage.getItem('user') ||
-          JSON.stringify({ accesToken: '', isAuthenticated: false })
+          JSON.stringify({
+            accesToken: '',
+            isAuthenticated: false,
+            username: '',
+          })
       )
     );
 
@@ -50,6 +58,7 @@ export class AuthService {
           const authState: AuthState = {
             accessToken: response.accessToken,
             isAuthenticated: true,
+            username,
           };
           localStorage.setItem('user', JSON.stringify(authState));
           this.userSubject.next(authState);
