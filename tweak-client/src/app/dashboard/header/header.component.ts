@@ -1,10 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthService } from 'src/app/auth/auth.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 import {
   CalendarService,
   WeekGenerationType,
 } from 'src/app/shared/services/calendar.service';
+import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
 
 @Component({
   selector: 'app-header',
@@ -36,8 +37,6 @@ import {
 export class HeaderComponent implements OnInit {
   currentUsername: string = 'sounish';
   monthWithYear$: Observable<string> = new Observable<string>();
-  @Output() onWeekToggle: EventEmitter<{ dates: Array<Date> }> =
-    new EventEmitter();
 
   /**
    *
@@ -50,12 +49,12 @@ export class HeaderComponent implements OnInit {
 
   private onPreviousClicked() {
     this.calendarService.generateWeekDates(WeekGenerationType.PAST_WEEK);
-    // this.weekScheduleService.getSchedulesForDateRange(startDate, endDate);
+    this.weekSchedulerService.refreshState();
   }
 
   private onNextClicked() {
     this.calendarService.generateWeekDates(WeekGenerationType.NEXT_WEEK);
-    // this.weekScheduleService.getSchedulesForDateRange(startDate, endDate);
+    this.weekSchedulerService.refreshState();
   }
 
   public onWeekToggleClicked({ type }: { type: 'prev' | 'next' }): void {
@@ -68,7 +67,8 @@ export class HeaderComponent implements OnInit {
    */
   constructor(
     private readonly authService: AuthService,
-    private readonly calendarService: CalendarService
+    private readonly calendarService: CalendarService,
+    private readonly weekSchedulerService: WeekSchedulerService
   ) {
     this.currentUsername = this.authService.userAuthState.username;
     this.monthWithYear$ = this.calendarService.monthWithYear$;

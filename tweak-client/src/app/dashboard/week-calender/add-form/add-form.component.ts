@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-
 @Component({
   selector: 'app-add-form',
   template: `
@@ -37,11 +36,10 @@ export class AddFormComponent implements OnInit {
   onSubmit() {
     const formData = {
       ...this.addForm.value,
-      date: this.date.toDateString(),
-      colorCode: 2,
+      date: this.date,
       finished: false,
     };
-    // this.weeklyScheduleService.createNewTodo(formData);
+    console.log({ formData });
     this.addForm.reset();
   }
 

@@ -6,7 +6,7 @@ import { CalendarService } from '../shared/services/calendar.service';
   selector: 'app-dashboard',
   template: `
     <div class="p-4 my-3">
-      <app-header (onWeekToggle)="grabDates($event)"></app-header>
+      <app-header></app-header>
       <app-week-calender [weekDays]="dates"></app-week-calender>
     </div>
   `,
@@ -29,10 +29,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {}
-
-  public grabDates(payload: { dates: Array<Date> }) {
-    this.dates = payload.dates;
-  }
 
   registerSubscriptions(callback: Function) {
     return this.subscriptions.push(callback());

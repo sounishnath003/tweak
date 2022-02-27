@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
 
 @Component({
   selector: 'app-week-calender',
@@ -30,7 +31,10 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class WeekCalenderComponent implements OnInit {
   @Input() weekDays!: Date[];
-  constructor() {}
 
-  ngOnInit(): void {}
+  constructor(private readonly weekSchedulerService: WeekSchedulerService) {}
+
+  ngOnInit(): void {
+    this.weekSchedulerService.refreshState();
+  }
 }

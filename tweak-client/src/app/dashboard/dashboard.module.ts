@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../shared/services/auth.service';
 import { CalendarService } from '../shared/services/calendar.service';
+import { WeekSchedulerService } from '../shared/services/week-scheduler.service';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { HeaderComponent } from './header/header.component';
@@ -24,6 +25,6 @@ import { WeekCalenderComponent } from './week-calender/week-calender.component';
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [AuthService, CalendarService],
+  providers: [AuthService, CalendarService, WeekSchedulerService],
 })
 export class DashboardModule {}

@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
+import { Schedule } from 'src/app/shared/utils/types.utils';
 
 @Component({
   selector: 'app-daily-todo',
@@ -27,12 +28,36 @@ import { Subscription } from 'rxjs';
 })
 export class DailyTodoComponent implements OnInit, OnDestroy {
   @Input() date!: Date;
-  works: Array<any> = [];
-  worksSubscription: Subscription = new Subscription();
+  works: Array<Schedule> = [];
   editForms: Array<FormGroup> = [];
 
-  constructor() {}
+  constructor(private readonly weeklyScheduleService: WeekSchedulerService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.weeklyScheduleService.weekSchedules$.subscribe((data) => {
+      const d = data[this.date.toDateString()];
+      this.works = d ? [...d] : [];
+
+      this.works.forEach((work) =>
+        this.editForms.push(this.createNewForm({ ...work }))
+      );
+    });
+  }
   ngOnDestroy(): void {}
+
+  private createNewForm(work: Schedule): FormGroup {
+    const editForm: FormGroup = new FormGroup({
+      _id: new FormControl('', [Validators.requiredTrue]),
+      __v: new FormControl('', [Validators.requiredTrue]),
+      todo: new FormControl('', [Validators.requiredTrue]),
+      date: new FormControl('', [Validators.requiredTrue]),
+      colorCode: new FormControl('', [Validators.requiredTrue]),
+      finished: new FormControl('', [Validators.requiredTrue]),
+      username: new FormControl('', [Validators.requiredTrue]),
+      createdAt: new FormControl('', [Validators.requiredTrue]),
+    });
+
+    editForm.setValue({ ...work });
+    return editForm;
+  }
 }

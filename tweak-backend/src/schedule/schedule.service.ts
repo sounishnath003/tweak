@@ -36,10 +36,13 @@ export class ScheduleService {
   }
 
   async findByWeek(user: User, from: Date, to: Date) {
+    const mfrom = new Date(from).toDateString();
+    const mto = new Date(to).toDateString();
+
     const schedules = await this.scheduleModel
       .where({
         username: user.username,
-        date: { $gte: from, $lte: to },
+        date: { $gte: mfrom, $lte: mto },
       })
       .sort([['date', 'desc']]);
 

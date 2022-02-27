@@ -82,8 +82,6 @@ export class CalendarService {
     this.weekEndDate = dates[6];
 
     this.monthWithYearSubject.next(this.getCurrentMonthWithYear());
-
-    this.calendarWeekSubject.next(dates);
     return dates;
   }
 
@@ -106,8 +104,6 @@ export class CalendarService {
     this.weekEndDate = dates[6];
 
     this.monthWithYearSubject.next(this.getCurrentMonthWithYear());
-
-    this.calendarWeekSubject.next(dates);
     return dates;
   }
 
