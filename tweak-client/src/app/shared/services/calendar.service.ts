@@ -13,10 +13,13 @@ export enum WeekGenerationType {
 export class CalendarService {
   private readonly currentWeekStartDate: Date = new Date(
     new Date().setDate(new Date().getDate() - new Date().getDay() + 1)
-  ); // new Date();
+  );
+  // new Date(
+  //   new Date().setDate(new Date().getDate() - new Date().getDay() + 1)
+  // ); // new Date();
 
   private weekStartDate: Date = new Date(
-    new Date().setDate(new Date().getDate() - 0)
+    new Date().setDate(new Date().getDate() - new Date().getDay() + 1)
   );
   private weekEndDate: Date = new Date(
     new Date().setDate(this.currentWeekStartDate.getDate() + 6)
@@ -116,9 +119,9 @@ export class CalendarService {
   }
 
   private getDate(inc = 0) {
-    const d = new Date();
-    d.setDate(this.currentWeekStartDate.getDate() + inc);
-    return d;
+    return new Date(
+      new Date().setDate(new Date(this.currentWeekStartDate).getDate() + inc)
+    );
   }
 
   private getCurrentMonth(): string {

@@ -10,7 +10,8 @@ import { Schedule } from 'src/app/shared/utils/types.utils';
       *ngFor="let work of works; let idx = index"
       [attr.data-index]="idx"
       class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
-      appDebounceDoubleClick
+      appOnDoubleClick
+      (onDoubleClick)="hi($event)"
     >
       <form [formGroup]="editForms[idx]" (ngSubmit)="onEdited(editForms[idx])">
         <div>
@@ -32,6 +33,10 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
   editForms: Array<FormGroup> = [];
 
   constructor(private readonly weeklyScheduleService: WeekSchedulerService) {}
+
+  hi(event: any) {
+    console.log('hii');
+  }
 
   ngOnInit(): void {
     this.weeklyScheduleService.weekSchedules$.subscribe((data) => {

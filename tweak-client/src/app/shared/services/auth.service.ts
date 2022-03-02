@@ -66,4 +66,39 @@ export class AuthService {
         })
       );
   }
+
+  signupWithUsernamePassword(username: string, password: string) {
+    return this.http
+      .post(
+        `/api/auth/sign-up`,
+        {
+          username,
+          password,
+        },
+        { withCredentials: true }
+      )
+      .pipe(
+        shareReplay(),
+        catchError(handleError),
+        tap((response: any) => {
+          const authState: AuthState = {
+            accessToken: response.accessToken,
+            isAuthenticated: true,
+            username,
+          };
+          localStorage.setItem('user', JSON.stringify(authState));
+          this.userSubject.next(authState);
+          return response;
+        })
+      );
+  }
+
+  logout() {
+    localStorage.clear();
+    this.userSubject.next({
+      isAuthenticated: false,
+      username: '',
+      accessToken: '',
+    });
+  }
 }

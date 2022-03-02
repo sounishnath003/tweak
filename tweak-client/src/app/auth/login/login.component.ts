@@ -125,13 +125,30 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  onSignup() {}
+  onSignup() {
+    const { username, password } = this.form.value;
+    this.authService.signupWithUsernamePassword(username, password).subscribe({
+      next: (response) => {
+        this.form.reset();
+        window.location.replace('/')
+      },
+      error: (error) => {
+        const e = error.message;
+        if (typeof e === 'string') {
+          this.errors = [e];
+        } else {
+          this.errors = [...(error.error.message || `something went wrong!`)];
+        }
+      },
+    });
+  }
 
   onSignin() {
     const { username, password } = this.form.value;
     this.authService.signinWithUsernamePassword(username, password).subscribe({
       next: (response) => {
         const { redirectTo } = this.route.snapshot.queryParams;
+        this.form.reset();
         this.router.navigate([redirectTo]);
       },
       error: (error) => {
@@ -143,6 +160,5 @@ export class LoginComponent implements OnInit {
         }
       },
     });
-    this.form.reset();
   }
 }

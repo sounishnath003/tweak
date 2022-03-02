@@ -1,21 +1,18 @@
-import {
-  Directive,
-  EventEmitter,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Directive, EventEmitter, HostListener, OnDestroy, OnInit, Output } from '@angular/core';
 import { buffer, debounceTime, filter, map, Subject } from 'rxjs';
 
 @Directive({
-  selector: '[appDebounceDoubleClick]',
+  selector: '[appOnDoubleClick]',
 })
-export class DebounceDoubleClickDirective implements OnInit, OnDestroy {
-  private clicks$ = new Subject<MouseEvent>();
+export class OnDoubleClickDirective implements OnInit, OnDestroy {
+  clicks$: Subject<MouseEvent>;
 
   @Output()
   onDoubleClick = new EventEmitter<MouseEvent>();
+  
+  constructor() {
+    this.clicks$ = new Subject<MouseEvent>();
+  }
 
   ngOnInit(): void {
     this.clicks$

@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs/internal/Subscription';
+import { CalendarService } from 'src/app/shared/services/calendar.service';
 import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
 
 @Component({
@@ -30,11 +32,24 @@ import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.ser
   styleUrls: ['./week-calender.component.css'],
 })
 export class WeekCalenderComponent implements OnInit {
-  @Input() weekDays!: Date[];
+  weekDays: Date[] = [];
+  subscriptions: Array<Subscription> = [];
 
-  constructor(private readonly weekSchedulerService: WeekSchedulerService) {}
+  constructor(
+    private readonly weekSchedulerService: WeekSchedulerService,
+    private calendarService: CalendarService
+  ) {}
 
   ngOnInit(): void {
+    this.registerSubscriptions(() =>
+      this.calendarService.calenderWeek$.subscribe((dates) => {
+        this.weekDays = [...dates];
+      })
+    );
     this.weekSchedulerService.refreshState();
+  }
+
+  private registerSubscriptions(callback: Function) {
+    return this.subscriptions.push(callback());
   }
 }

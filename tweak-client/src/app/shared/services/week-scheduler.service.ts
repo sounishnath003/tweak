@@ -10,6 +10,7 @@ import {
   tap,
 } from 'rxjs';
 import { Schedule, WeeklySchedulesInterface } from '../utils/types.utils';
+import { AuthService } from './auth.service';
 import { CalendarService } from './calendar.service';
 
 type WeekScheduleMapType = Record<string, Array<Schedule>>;
@@ -29,7 +30,8 @@ export class WeekSchedulerService implements OnDestroy {
 
   constructor(
     private readonly http: HttpClient,
-    private calendarService: CalendarService
+    private calendarService: CalendarService,
+    private authService: AuthService
   ) {
     this.weekScheduleMapSubject = new BehaviorSubject<WeekScheduleMapType>({});
     this.weekSchedules$ = this.weekScheduleMapSubject.asObservable();
@@ -52,6 +54,12 @@ export class WeekSchedulerService implements OnDestroy {
     console.warn('WeekScheduler Service Died...');
   }
 
+  createSchedule(createSchedule: Partial<Schedule>) {
+    return this.http
+      .post(`/api/schedules/create`, createSchedule)
+      .pipe(tap(() => this.refreshState()));
+  }
+
   getSchedules() {
     const { startDate, endDate } = this.getStartAndEndDate();
 
@@ -63,14 +71,21 @@ export class WeekSchedulerService implements OnDestroy {
         },
       })
       .pipe(shareReplay())
-      .subscribe((response: Partial<WeeklySchedulesInterface>) => {
-        if (response.data) {
-          response.data.forEach((object) => {
-            this.weekScheduleMap[object.date] = [...object.schedules];
-          });
-          this.weekScheduleMapSubject.next(this.weekScheduleMap);
-          console.log(`[Refreshed]: Schedules Refreshed!`);
-        }
+      .subscribe({
+        next: (response: Partial<WeeklySchedulesInterface>) => {
+          if (response.data) {
+            response.data.forEach((object) => {
+              this.weekScheduleMap[object.date] = [...object.schedules];
+            });
+            this.weekScheduleMapSubject.next(this.weekScheduleMap);
+            console.log(`[Refreshed]: Schedules Refreshed!`);
+          }
+        },
+        error: (error) => {
+          console.error(`Error was: ${error.error}`);
+          this.authService.logout();
+          window.location.replace('/');
+        },
       });
   }
 

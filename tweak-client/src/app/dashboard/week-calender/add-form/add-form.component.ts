@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
+import { Schedule } from 'src/app/shared/utils/types.utils';
 
 @Component({
   selector: 'app-add-form',
@@ -27,20 +29,26 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class AddFormComponent implements OnInit {
   @Input() date!: Date;
-  constructor() {}
+  constructor(private readonly weeklyScheduleService: WeekSchedulerService) {}
 
   addForm: FormGroup = new FormGroup({
     todo: new FormControl(null),
   });
 
   onSubmit() {
-    const formData = {
+    const formData: Schedule = {
       ...this.addForm.value,
       date: this.date,
+      colorCode: '1',
       finished: false,
     };
-    console.log({ formData });
-    this.addForm.reset();
+
+    this.weeklyScheduleService
+      .createSchedule(formData)
+      .subscribe((response) => {
+        console.log(`[INFO]: New schedule has been created!`);
+        this.addForm.reset();
+      });
   }
 
   ngOnInit(): void {}
