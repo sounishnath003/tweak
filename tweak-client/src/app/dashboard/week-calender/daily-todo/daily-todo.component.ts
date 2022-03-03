@@ -1,7 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
 import { Schedule } from 'src/app/shared/utils/types.utils';
+import { DialoagboxComponent } from './dialoagbox/dialoagbox.component';
 
 @Component({
   selector: 'app-daily-todo',
@@ -11,7 +13,7 @@ import { Schedule } from 'src/app/shared/utils/types.utils';
       [attr.data-index]="idx"
       class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
       appOnDoubleClick
-      (onDoubleClick)="hi($event)"
+      (onDoubleClick)="launchDialog($event, editForms[idx])"
     >
       <form [formGroup]="editForms[idx]" (ngSubmit)="onEdited(editForms[idx])">
         <div>
@@ -32,11 +34,10 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
   works: Array<Schedule> = [];
   editForms: Array<FormGroup> = [];
 
-  constructor(private readonly weeklyScheduleService: WeekSchedulerService) {}
-
-  hi(event: any) {
-    console.log('hii');
-  }
+  constructor(
+    private readonly weeklyScheduleService: WeekSchedulerService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.weeklyScheduleService.weekSchedules$.subscribe((data) => {
@@ -72,5 +73,18 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         console.log(`[UPDATE]: Schedule has been updated `);
       });
+  }
+
+  launchDialog(_: MouseEvent, form: FormGroup) {
+    const dialogRef = this.dialog.open(DialoagboxComponent, {
+      width: '600px',
+      data: { payload: form.value },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      form.setValue({ ...result });
+      console.log({ result });
+      // this.onEdited(form);
+    });
   }
 }

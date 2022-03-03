@@ -1,10 +1,9 @@
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {
-  ScheduleObject,
-  WeeklyScheduleService,
-} from 'src/app/services/weekly-schedule.service';
+import { Subject } from 'rxjs';
+import { ColorUtils } from 'src/app/shared/utils/colors.utils';
+import { Schedule } from 'src/app/shared/utils/types.utils';
 
 @Component({
   selector: 'app-dialoagbox',
@@ -15,7 +14,7 @@ import {
           <mat-label> {{ scheduleData.date | date: 'dd/MM/YYYY' }} </mat-label>
           <input
             formControlName="date"
-            [value]="scheduleData.date | date: 'dd/MM/YYYY'"
+            [value]="scheduleData.date"
             matInput
             [matDatepickerFilter]="checkNotToProvidePreviousWeek"
             [matDatepicker]="datepicker"
@@ -36,6 +35,20 @@ import {
             [value]="scheduleData.todo"
           ></textarea>
         </mat-form-field>
+
+        <div>
+          <mat-label> Assign Color </mat-label>
+          <div class="flex flex-wrap justify-start items-center space-x-4 my-3">
+            <div
+              *ngFor="let color of colors; let idx = index"
+              [class]="
+                'w-6 focus:border cursor-pointer h-6 rounded-full' +
+                generateColor(idx)
+              "
+              (click)="colorSelector$.next(idx)"
+            ></div>
+          </div>
+        </div>
       </div>
       <div mat-dialog-actions class="flex justify-end">
         <button color="accent" mat-button mat-dialog-close="false">
@@ -43,7 +56,7 @@ import {
         </button>
         <button
           mat-button
-          [mat-dialog-close]="formGroup.value"
+          [mat-dialog-close]="onSave()"
           cdkFocusInitial
           color="primary"
         >
@@ -55,9 +68,16 @@ import {
   styleUrls: ['./dialoagbox.component.css'],
 })
 export class DialoagboxComponent implements OnInit {
-  scheduleData: ScheduleObject;
-  @Output() cancelEvent: EventEmitter<HTMLButtonElement>;
-  @Output() saveEvent: EventEmitter<ScheduleObject>;
+  scheduleData: Schedule;
+  colorCode: number = 0;
+  colorSelector$: Subject<number> = new Subject<number>();
+
+  colors: Array<string> = [
+    'bg-red-500',
+    'bg-yellow-300',
+    'bg-green-400',
+    'bg-blue-400',
+  ];
 
   formGroup: FormGroup = new FormGroup({
     _id: new FormControl('', [Validators.requiredTrue]),
@@ -67,22 +87,18 @@ export class DialoagboxComponent implements OnInit {
     colorCode: new FormControl('', [Validators.requiredTrue]),
     finished: new FormControl('', [Validators.requiredTrue]),
     username: new FormControl('', [Validators.requiredTrue]),
+    createdAt: new FormControl('', [Validators.requiredTrue]),
   });
 
   constructor(
-    private readonly weekScheduleService: WeeklyScheduleService,
-    @Inject(MAT_DIALOG_DATA) dialogData: { payload: ScheduleObject }
+    @Inject(MAT_DIALOG_DATA) private dialogData: { payload: Schedule }
   ) {
-    this.cancelEvent = new EventEmitter<HTMLButtonElement>();
-    this.saveEvent = new EventEmitter<ScheduleObject>();
     this.scheduleData = dialogData.payload;
     this.formGroup.setValue({ ...this.scheduleData });
   }
 
-  ngOnInit(): void {}
-
-  onCancel() {
-    this.cancelEvent.emit();
+  ngOnInit(): void {
+    this.colorSelector$.subscribe((colorCode) => (this.colorCode = colorCode));
   }
 
   checkNotToProvidePreviousWeek(d: Date | null) {
@@ -94,15 +110,13 @@ export class DialoagboxComponent implements OnInit {
   }
 
   onSave() {
-    console.log('data saved...');
-    this.saveEvent.emit(this.scheduleData);
+    return (this.dialogData.payload = {
+      ...this.formGroup.value,
+      colorCode: this.colorCode,
+    });
   }
 
-  onChange(e: any) {
-    const updatedSchedule = {
-      ...this.scheduleData,
-      date: new Date(e.value).toDateString(),
-    };
-    this.weekScheduleService.updateSchedule(updatedSchedule);
+  generateColor(id: number) {
+    return ` ${ColorUtils.COLORS[id]}`;
   }
 }

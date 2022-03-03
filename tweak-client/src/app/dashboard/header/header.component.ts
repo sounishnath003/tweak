@@ -14,13 +14,13 @@ import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.ser
       <div class="flex space-x-4 m-auto text-4xl font-bold">
         <button
           (click)="onWeekToggleClicked({ type: 'prev' })"
-          class="m-auto border hover:bg-gray-100 border-black rounded p-2"
+          class="m-auto border hover:bg-gray-200 font-semibold border-black rounded p-2"
         >
           <img src="assets/left-arrow.svg" class="w-5 h-5" />
         </button>
         <button
           (click)="onWeekToggleClicked({ type: 'next' })"
-          class="m-auto border hover:bg-gray-100 border-black rounded p-2"
+          class="m-auto border hover:bg-gray-200 font-semibold border-black rounded p-2"
         >
           <img src="assets/right-arrow.svg" class="w-5 h-5" />
         </button>

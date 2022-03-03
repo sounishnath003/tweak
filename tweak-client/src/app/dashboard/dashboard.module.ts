@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from '../material/material.module';
 import { OnDoubleClickDirective } from '../shared/directives/on-double-click.directive';
 import { AuthService } from '../shared/services/auth.service';
 import { CalendarService } from '../shared/services/calendar.service';
@@ -10,6 +11,7 @@ import { DashboardComponent } from './dashboard.component';
 import { HeaderComponent } from './header/header.component';
 import { AddFormComponent } from './week-calender/add-form/add-form.component';
 import { DailyTodoComponent } from './week-calender/daily-todo/daily-todo.component';
+import { DialoagboxComponent } from './week-calender/daily-todo/dialoagbox/dialoagbox.component';
 import { WeekCalenderComponent } from './week-calender/week-calender.component';
 
 @NgModule({
@@ -19,13 +21,15 @@ import { WeekCalenderComponent } from './week-calender/week-calender.component';
     WeekCalenderComponent,
     AddFormComponent,
     DailyTodoComponent,
-    OnDoubleClickDirective
+    OnDoubleClickDirective,
+    DialoagboxComponent
   ],
   imports: [
     CommonModule,
     DashboardRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    MaterialModule
   ],
   providers: [AuthService, CalendarService, WeekSchedulerService],
 })
