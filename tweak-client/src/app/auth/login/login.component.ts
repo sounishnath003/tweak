@@ -12,7 +12,12 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   selector: 'app-login',
   template: `
     <div class="m-20" fxLayout="column" fxLayoutAlign="start center">
-      <h1 class="text-2xl my-3">Tweak Auth</h1>
+      <div fxLayout="column" fxLayoutAlign="start center" class="my-6">
+        <h1 class="text-4xl font-semibold my-2 text-indigo-700">Tweak Planner</h1>
+        <div class="body-font text-indigo-900">
+          Plan you week what we were used to those days👨🏻‍💻.
+        </div>
+      </div>
       <form
         [formGroup]="form"
         fxLayout="column"
@@ -130,7 +135,7 @@ export class LoginComponent implements OnInit {
     this.authService.signupWithUsernamePassword(username, password).subscribe({
       next: (response) => {
         this.form.reset();
-        window.location.replace('/')
+        window.location.replace('/');
       },
       error: (error) => {
         const e = error.message;
