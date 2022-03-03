@@ -29,7 +29,13 @@ import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.ser
         </div>
       </div>
       <div class="m-auto flex-1"></div>
-      <div class="m-auto">@{{ currentUsername }}</div>
+
+      <div class="m-auto">
+        <button [matMenuTriggerFor]="menu">@{{ currentUsername }}</button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="onLogout()">Log out</button>
+        </mat-menu>
+      </div>
     </div>
   `,
   styleUrls: ['./header.component.css'],
@@ -75,4 +81,8 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  onLogout() {
+    this.authService.logout();
+  }
 }

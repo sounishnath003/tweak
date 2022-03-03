@@ -100,5 +100,6 @@ export class AuthService {
       username: '',
       accessToken: '',
     });
+    window.location.replace('/');
   }
 }
