@@ -108,6 +108,20 @@ export class WeekSchedulerService implements OnDestroy {
       );
   }
 
+  deleteSchedule(schedule: Partial<Schedule>) {
+    const { _id } = schedule;
+    return this.http
+      .delete(`/api/schedules/delete`, {
+        params: { id: _id as string },
+      })
+      .pipe(
+        share(),
+        tap(() => {
+          this.refreshState();
+        })
+      );
+  }
+
   private getStartAndEndDate() {
     return {
       startDate: this.dates[0],

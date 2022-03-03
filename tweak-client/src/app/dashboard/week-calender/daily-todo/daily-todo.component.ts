@@ -91,13 +91,11 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
     const previousState = { ...form.value };
     const dialogRef = this.dialog.open(DialoagboxComponent, {
       width: '600px',
-      data: { payload: form.value },
+      data: { payload: form.value, reference: this.dialog },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       form.setValue({ ...result });
-      console.log({ result });
-
       if (JSON.stringify(previousState) === JSON.stringify({ ...form.value }))
         return;
       this.onEdited(form);

@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
+import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
 import { ColorUtils } from 'src/app/shared/utils/colors.utils';
 import { Schedule } from 'src/app/shared/utils/types.utils';
 
@@ -9,7 +10,7 @@ import { Schedule } from 'src/app/shared/utils/types.utils';
   selector: 'app-dialoagbox',
   template: `
     <form [formGroup]="formGroup">
-      <div>
+      <div class="flex flex-row flex-wrap justify-between items-start">
         <mat-form-field>
           <mat-label> {{ scheduleData.date | date: 'dd/MM/YYYY' }} </mat-label>
           <input
@@ -25,6 +26,12 @@ import { Schedule } from 'src/app/shared/utils/types.utils';
           ></mat-datepicker-toggle>
           <mat-datepicker #datepicker></mat-datepicker>
         </mat-form-field>
+        <div
+          (click)="onDelete()"
+          class="p-1 rounded-full hover:bg-gray-300 cursor-pointer"
+        >
+          <img src="assets/trash.svg" class="w-5 h-5" />
+        </div>
       </div>
       <div mat-dialog-content>
         <mat-form-field appearance="fill" class="min-w-full">
@@ -86,7 +93,8 @@ export class DialoagboxComponent implements OnInit {
   });
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) private dialogData: { payload: Schedule }
+    private weeklyScheduleService: WeekSchedulerService,
+    @Inject(MAT_DIALOG_DATA) private dialogData: { payload: Schedule, reference: MatDialog }
   ) {
     this.scheduleData = dialogData.payload;
     this.formGroup.setValue({ ...this.scheduleData });
@@ -117,6 +125,15 @@ export class DialoagboxComponent implements OnInit {
 
   onCancel() {
     return (this.dialogData.payload = { ...this.scheduleData });
+  }
+
+  onDelete() {
+    this.weeklyScheduleService
+      .deleteSchedule({ ...this.scheduleData })
+      .subscribe((response) => {
+        this.dialogData.reference.closeAll();
+        console.log(`[REMOVED]: Schedule has been deleted.`);
+      });
   }
 
   generateColor(id: number) {
