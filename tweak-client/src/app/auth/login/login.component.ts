@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   selector: 'app-login',
   template: `
     <div class="m-20" fxLayout="column" fxLayoutAlign="start center">
-      <h1>Tweak Auth</h1>
+      <h1 class="text-2xl my-3">Tweak Auth</h1>
       <form
         [formGroup]="form"
         fxLayout="column"

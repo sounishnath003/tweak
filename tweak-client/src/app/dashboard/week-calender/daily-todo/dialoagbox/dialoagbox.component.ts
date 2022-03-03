@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { ColorUtils } from 'src/app/shared/utils/colors.utils';
@@ -37,21 +37,21 @@ import { Schedule } from 'src/app/shared/utils/types.utils';
         </mat-form-field>
 
         <div>
-          <mat-label> Assign Color </mat-label>
+          <mat-label> Assign Color: </mat-label>
           <div class="flex flex-wrap justify-start items-center space-x-4 my-3">
-            <div
+            <button
               *ngFor="let color of colors; let idx = index"
               [class]="
-                'w-6 focus:border cursor-pointer h-6 rounded-full' +
+                'w-6 border border-gray-600 cursor-pointer h-6 rounded-full focus:ring-2 focus:ring-offset-2 focus:ring-black' +
                 generateColor(idx)
               "
               (click)="colorSelector$.next(idx)"
-            ></div>
+            ></button>
           </div>
         </div>
       </div>
       <div mat-dialog-actions class="flex justify-end">
-        <button color="accent" mat-button mat-dialog-close="false">
+        <button color="accent" mat-button [mat-dialog-close]="onCancel()">
           Cancel
         </button>
         <button
@@ -69,25 +69,20 @@ import { Schedule } from 'src/app/shared/utils/types.utils';
 })
 export class DialoagboxComponent implements OnInit {
   scheduleData: Schedule;
-  colorCode: number = 0;
+  colorCode: number = -1;
   colorSelector$: Subject<number> = new Subject<number>();
 
-  colors: Array<string> = [
-    'bg-red-500',
-    'bg-yellow-300',
-    'bg-green-400',
-    'bg-blue-400',
-  ];
+  colors: Array<string> = [];
 
   formGroup: FormGroup = new FormGroup({
-    _id: new FormControl('', [Validators.requiredTrue]),
-    __v: new FormControl('', [Validators.requiredTrue]),
-    todo: new FormControl('', [Validators.requiredTrue]),
-    date: new FormControl('', [Validators.requiredTrue]),
-    colorCode: new FormControl('', [Validators.requiredTrue]),
-    finished: new FormControl('', [Validators.requiredTrue]),
-    username: new FormControl('', [Validators.requiredTrue]),
-    createdAt: new FormControl('', [Validators.requiredTrue]),
+    _id: new FormControl(''),
+    __v: new FormControl(''),
+    todo: new FormControl(''),
+    date: new FormControl(''),
+    colorCode: new FormControl(''),
+    finished: new FormControl(''),
+    username: new FormControl(''),
+    createdAt: new FormControl(''),
   });
 
   constructor(
@@ -98,6 +93,7 @@ export class DialoagboxComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.colors = [...ColorUtils.COLORS];
     this.colorSelector$.subscribe((colorCode) => (this.colorCode = colorCode));
   }
 
@@ -112,8 +108,15 @@ export class DialoagboxComponent implements OnInit {
   onSave() {
     return (this.dialogData.payload = {
       ...this.formGroup.value,
-      colorCode: this.colorCode,
+      colorCode:
+        this.colorCode === -1
+          ? this.formGroup.get('colorCode')?.value
+          : this.colorCode,
     });
+  }
+
+  onCancel() {
+    return (this.dialogData.payload = { ...this.scheduleData });
   }
 
   generateColor(id: number) {

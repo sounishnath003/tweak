@@ -39,7 +39,7 @@ export class AddFormComponent implements OnInit {
     const formData: Schedule = {
       ...this.addForm.value,
       date: this.date,
-      colorCode: '1',
+      colorCode: '0',
       finished: false,
     };
 

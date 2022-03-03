@@ -73,6 +73,7 @@ export class WeekSchedulerService implements OnDestroy {
       .pipe(shareReplay())
       .subscribe({
         next: (response: Partial<WeeklySchedulesInterface>) => {
+          this.weekScheduleMap = {}; // CLEARS OUT BUFFER
           if (response.data) {
             response.data.forEach((object) => {
               this.weekScheduleMap[object.date] = [...object.schedules];
