@@ -1,6 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatSnackBar,
+  MatSnackBarRef,
+  TextOnlySnackBar,
+} from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
 import { ColorUtils } from 'src/app/shared/utils/colors.utils';
@@ -94,7 +99,9 @@ export class DialoagboxComponent implements OnInit {
 
   constructor(
     private weeklyScheduleService: WeekSchedulerService,
-    @Inject(MAT_DIALOG_DATA) private dialogData: { payload: Schedule, reference: MatDialog }
+    @Inject(MAT_DIALOG_DATA)
+    private dialogData: { payload: Schedule; reference: MatDialog },
+    private snackbar: MatSnackBar
   ) {
     this.scheduleData = dialogData.payload;
     this.formGroup.setValue({ ...this.scheduleData });
@@ -132,7 +139,23 @@ export class DialoagboxComponent implements OnInit {
       .deleteSchedule({ ...this.scheduleData })
       .subscribe((response) => {
         this.dialogData.reference.closeAll();
-        console.log(`[REMOVED]: Schedule has been deleted.`);
+        const snackbarRef: MatSnackBarRef<TextOnlySnackBar> =
+          this.snackbar.open('Schedule has been deleted.', 'Undo', {
+            duration: 3000,
+          });
+
+        snackbarRef.onAction().subscribe(() => {
+          this.weeklyScheduleService
+            .createSchedule({
+              ...this.scheduleData,
+              colorCode: String(this.scheduleData.colorCode),
+            })
+            .subscribe((response) => {
+              this.snackbar.open('Schedule has been restored.', 'Done', {
+                duration: 3000,
+              });
+            });
+        });
       });
   }
 

@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
 import { ColorUtils } from 'src/app/shared/utils/colors.utils';
 import { Schedule } from 'src/app/shared/utils/types.utils';
@@ -48,7 +49,8 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly weeklyScheduleService: WeekSchedulerService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackbar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +85,9 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
     this.weeklyScheduleService
       .updateSchedule({ ...form.value })
       .subscribe(() => {
-        console.log(`[UPDATE]: Schedule has been updated `);
+        this.snackbar.open(`Schedule has been updated`, 'Ok', {
+          duration: 3000,
+        });
       });
   }
 

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
 import { Schedule } from 'src/app/shared/utils/types.utils';
 
@@ -29,7 +30,7 @@ import { Schedule } from 'src/app/shared/utils/types.utils';
 })
 export class AddFormComponent implements OnInit {
   @Input() date!: Date;
-  constructor(private readonly weeklyScheduleService: WeekSchedulerService) {}
+  constructor(private readonly weeklyScheduleService: WeekSchedulerService, private snackbar: MatSnackBar) {}
 
   addForm: FormGroup = new FormGroup({
     todo: new FormControl(null),
@@ -46,7 +47,7 @@ export class AddFormComponent implements OnInit {
     this.weeklyScheduleService
       .createSchedule(formData)
       .subscribe((response) => {
-        console.log(`[INFO]: New schedule has been created!`);
+        this.snackbar.open(`New schedule has been created!`, 'Cancel', {duration: 3000});
         this.addForm.reset();
       });
   }

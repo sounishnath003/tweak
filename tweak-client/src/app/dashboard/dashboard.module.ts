@@ -22,14 +22,14 @@ import { WeekCalenderComponent } from './week-calender/week-calender.component';
     AddFormComponent,
     DailyTodoComponent,
     OnDoubleClickDirective,
-    DialoagboxComponent
+    DialoagboxComponent,
   ],
   imports: [
     CommonModule,
     DashboardRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    MaterialModule
+    MaterialModule,
   ],
   providers: [AuthService, CalendarService, WeekSchedulerService],
 })

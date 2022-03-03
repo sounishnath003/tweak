@@ -5,7 +5,9 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationType } from 'src/app/shared/modules/notification/notification.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
@@ -13,7 +15,9 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   template: `
     <div class="m-20" fxLayout="column" fxLayoutAlign="start center">
       <div fxLayout="column" fxLayoutAlign="start center" class="my-6">
-        <h1 class="text-4xl font-semibold my-2 text-indigo-700">Tweak Planner</h1>
+        <h1 class="text-4xl font-semibold my-2 text-indigo-700">
+          Tweak Planner
+        </h1>
         <div class="body-font text-indigo-900">
           Plan you week what we were used to those days👨🏻‍💻.
         </div>
@@ -117,7 +121,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private readonly snackbar: MatSnackBar
   ) {
     this.form = new FormGroup({
       username: new FormControl('', [Validators.required]),
@@ -136,11 +141,15 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         this.form.reset();
         window.location.replace('/');
+        this.snackbar.open('App state re-initialized', 'Done', {
+          duration: 3000,
+        });
       },
       error: (error) => {
         const e = error.message;
         if (typeof e === 'string') {
           this.errors = [e];
+          this.snackbar.open(e, NotificationType.ERROR);
         } else {
           this.errors = [...(error.error.message || `something went wrong!`)];
         }
@@ -155,11 +164,15 @@ export class LoginComponent implements OnInit {
         const { redirectTo } = this.route.snapshot.queryParams;
         this.form.reset();
         this.router.navigate([redirectTo]);
+        this.snackbar.open('You are logged in', 'Done', {
+          duration: 3000,
+        });
       },
       error: (error) => {
         const e = error.message;
         if (typeof e === 'string') {
           this.errors = [e];
+          this.snackbar.open(e, NotificationType.ERROR);
         } else {
           this.errors = [...(error.error.message || `something went wrong!`)];
         }

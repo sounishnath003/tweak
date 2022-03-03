@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { CalendarService } from 'src/app/shared/services/calendar.service';
 import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
@@ -37,7 +38,8 @@ export class WeekCalenderComponent implements OnInit {
 
   constructor(
     private readonly weekSchedulerService: WeekSchedulerService,
-    private calendarService: CalendarService
+    private calendarService: CalendarService,
+    private snackbar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +49,7 @@ export class WeekCalenderComponent implements OnInit {
       })
     );
     this.weekSchedulerService.refreshState();
+    this.snackbar.open('Appstate Refreshed', 'Done', { duration: 3000 });
   }
 
   private registerSubscriptions(callback: Function) {
