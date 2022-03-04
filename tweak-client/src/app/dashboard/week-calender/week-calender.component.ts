@@ -49,7 +49,10 @@ export class WeekCalenderComponent implements OnInit {
       })
     );
     this.weekSchedulerService.refreshState();
-    this.snackbar.open('Appstate Refreshed', 'Done', { duration: 3000 });
+    this.snackbar.open('Appstate Refreshed', 'Done', {
+      duration: 3000,
+      panelClass: ['bg-indigo-700', 'text-white'],
+    });
   }
 
   private registerSubscriptions(callback: Function) {

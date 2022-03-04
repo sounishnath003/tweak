@@ -12,18 +12,23 @@ import { DialoagboxComponent } from './dialoagbox/dialoagbox.component';
   selector: 'app-daily-todo',
   template: `
     <div
+      cdkDropList
+      [cdkDropListData]="works"
+      (cdkDropListDropped)="onDropped($event)"
       *ngFor="let work of works; let idx = index"
       [attr.data-index]="idx"
-      class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
+      class="flex-col w-full flex justify-start py-2 border-b
+      hover:border-indigo-600"
     >
       <div
+        cdkDrag
         class="schedule-div"
         fxLayout="row"
         fxLayoutAlign="space-between center"
       >
         <div>
           <div
-            class="outline-none border-none rounded-xl truncate inline px-2 w-full focus:bg-gray-50 focus:z-50"
+            class="outline-none cursor-pointer border-none rounded-xl truncate inline px-2 w-full focus:bg-gray-50 focus:z-50"
             (click)="launchDialog($event, editForms[idx])"
             [ngClass]="
               work.finished
@@ -108,6 +113,7 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.snackbar.open(`Schedule has been updated`, 'Done', {
           duration: 3000,
+          panelClass: ['bg-indigo-700', 'text-white'],
         });
       });
   }
@@ -131,7 +137,9 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
     return ColorUtils.COLORS[+colorCode];
   }
 
-  onDropped(event: CdkDragDrop<Array<Schedule>>) {}
+  onDropped(event: CdkDragDrop<Array<Schedule>>) {
+    console.log(event);
+  }
 
   onCheck(state: boolean, form: FormGroup) {
     form.setValue({ ...form.value, finished: state });

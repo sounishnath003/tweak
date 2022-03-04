@@ -142,6 +142,7 @@ export class DialoagboxComponent implements OnInit {
         const snackbarRef: MatSnackBarRef<TextOnlySnackBar> =
           this.snackbar.open('Schedule has been deleted.', 'Undo', {
             duration: 3000,
+            panelClass: ['bg-red-600', 'text-white'],
           });
 
         snackbarRef.onAction().subscribe(() => {
@@ -153,6 +154,7 @@ export class DialoagboxComponent implements OnInit {
             .subscribe((response) => {
               this.snackbar.open('Schedule has been restored.', 'Done', {
                 duration: 3000,
+                panelClass: ['bg-green-600', 'text-white'],
               });
             });
         });
