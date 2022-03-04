@@ -1,3 +1,4 @@
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,20 +15,40 @@ import { DialoagboxComponent } from './dialoagbox/dialoagbox.component';
       *ngFor="let work of works; let idx = index"
       [attr.data-index]="idx"
       class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
-      (click)="launchDialog($event, editForms[idx])"
     >
-      <form [formGroup]="editForms[idx]" (ngSubmit)="onEdited(editForms[idx])">
-        <div
-          class="outline-none border-none rounded-xl truncate inline px-2 w-full focus:bg-gray-50 focus:z-50"
-          [ngClass]="getColor(work.colorCode)"
-        >
-          {{ work.todo }}
+      <div
+        class="schedule-div"
+        fxLayout="row"
+        fxLayoutAlign="space-between center"
+      >
+        <div>
+          <div
+            class="outline-none border-none rounded-xl truncate inline px-2 w-full focus:bg-gray-50 focus:z-50"
+            (click)="launchDialog($event, editForms[idx])"
+            [ngClass]="
+              work.finished
+                ? ' opacity-50 line-through bg-gray-300'
+                : getColor(work.colorCode)
+            "
+          >
+            {{ work.todo }}
+          </div>
         </div>
-      </form>
+        <div class="display-on-parent-hover hidden">
+          <mat-checkbox
+            (change)="onCheck($event.checked, editForms[idx])"
+            [checked]="work.finished"
+          ></mat-checkbox>
+        </div>
+      </div>
     </div>
   `,
   styles: [
     `
+      .schedule-div:hover .display-on-parent-hover {
+        visibility: visible;
+        display: block;
+      }
       .bg-green-420 {
         background-color: #22ffa1;
       }
@@ -85,7 +106,7 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
     this.weeklyScheduleService
       .updateSchedule({ ...form.value })
       .subscribe(() => {
-        this.snackbar.open(`Schedule has been updated`, 'Ok', {
+        this.snackbar.open(`Schedule has been updated`, 'Done', {
           duration: 3000,
         });
       });
@@ -108,5 +129,12 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
 
   getColor(colorCode: string) {
     return ColorUtils.COLORS[+colorCode];
+  }
+
+  onDropped(event: CdkDragDrop<Array<Schedule>>) {}
+
+  onCheck(state: boolean, form: FormGroup) {
+    form.setValue({ ...form.value, finished: state });
+    this.onEdited(form);
   }
 }
