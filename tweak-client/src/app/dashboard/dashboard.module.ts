@@ -12,6 +12,7 @@ import { HeaderComponent } from './header/header.component';
 import { AddFormComponent } from './week-calender/add-form/add-form.component';
 import { DailyTodoComponent } from './week-calender/daily-todo/daily-todo.component';
 import { DialoagboxComponent } from './week-calender/daily-todo/dialoagbox/dialoagbox.component';
+import { DragSropShareService } from './week-calender/drag-share.service';
 import { WeekCalenderComponent } from './week-calender/week-calender.component';
 
 @NgModule({
@@ -31,6 +32,6 @@ import { WeekCalenderComponent } from './week-calender/week-calender.component';
     ReactiveFormsModule,
     MaterialModule,
   ],
-  providers: [AuthService, CalendarService, WeekSchedulerService],
+  providers: [AuthService, CalendarService, WeekSchedulerService, DragSropShareService],
 })
 export class DashboardModule {}

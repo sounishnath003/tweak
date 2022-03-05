@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
 import { ColorUtils } from 'src/app/shared/utils/colors.utils';
 import { Schedule } from 'src/app/shared/utils/types.utils';
+import { DragSropShareService } from '../drag-share.service';
 import { DialoagboxComponent } from './dialoagbox/dialoagbox.component';
 
 @Component({
@@ -14,11 +15,11 @@ import { DialoagboxComponent } from './dialoagbox/dialoagbox.component';
     <div
       cdkDropList
       [cdkDropListData]="works"
-      (cdkDropListDropped)="onDropped($event)"
+      [cdkDropListConnectedTo]="generatedIds[connectedIndex]"
       *ngFor="let work of works; let idx = index"
       [attr.data-index]="idx"
-      class="flex-col w-full flex justify-start py-2 border-b
-      hover:border-indigo-600"
+      class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
+      [id]="getUniqueId(work)"
     >
       <div
         cdkDrag
@@ -69,6 +70,9 @@ import { DialoagboxComponent } from './dialoagbox/dialoagbox.component';
 })
 export class DailyTodoComponent implements OnInit, OnDestroy {
   @Input() date!: Date;
+  @Input() generatedIds!: Array<string>;
+  @Input() connectedIndex!: number;
+
   works: Array<Schedule> = [];
   editForms: Array<FormGroup> = [];
   bgColor: string = 'bg-transparent';
@@ -76,10 +80,17 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
   constructor(
     private readonly weeklyScheduleService: WeekSchedulerService,
     private dialog: MatDialog,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private dragDropService: DragSropShareService
   ) {}
 
+  getUniqueId(work: Schedule) {
+    return `ID@${work._id}@${work.date}`;
+  }
+
   ngOnInit(): void {
+    console.log(this.generatedIds[this.connectedIndex]);
+
     this.weeklyScheduleService.weekSchedules$.subscribe((data) => {
       const d = data[this.date.toDateString()];
       this.works = d ? [...d] : [];
@@ -138,7 +149,14 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
   }
 
   onDropped(event: CdkDragDrop<Array<Schedule>>) {
-    console.log(event);
+    this.dragDropService.drop(event);
+    // const previousContainerId = event.previousContainer.id;
+    // const currentContainerId = event.container.id;
+
+    // const oldDate = previousContainerId.split('@')[2];
+    // const curDate = currentContainerId.split('@')[2];
+
+    // console.log({ oldDate, curDate });
   }
 
   onCheck(state: boolean, form: FormGroup) {

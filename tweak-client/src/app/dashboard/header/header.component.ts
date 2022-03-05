@@ -11,19 +11,27 @@ import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.ser
   selector: 'app-header',
   template: `
     <div class="flex justify-between space-x-1">
-      <div class="flex space-x-4 m-auto text-4xl font-bold">
-        <button
-          (click)="onWeekToggleClicked({ type: 'prev' })"
-          class="m-auto border hover:bg-gray-200 font-semibold border-black rounded p-2"
-        >
-          <img src="assets/left-arrow.svg" class="w-5 h-5" />
-        </button>
-        <button
-          (click)="onWeekToggleClicked({ type: 'next' })"
-          class="m-auto border hover:bg-gray-200 font-semibold border-black rounded p-2"
-        >
-          <img src="assets/right-arrow.svg" class="w-5 h-5" />
-        </button>
+      <div
+        fxLayout.gt-lg="space-around center"
+        fxLayout="start center"
+        fxLayoutGap="20px"
+        class="m-auto md:text-4xl text-3xl font-bold"
+      >
+        <div fxLayout="start center" fxLayoutGap="20px">
+          <button
+            (click)="onWeekToggleClicked({ type: 'prev' })"
+            class="m-auto border hover:bg-gray-200 font-semibold border-black rounded p-2"
+          >
+            <img src="assets/left-arrow.svg" class="w-5 h-5" />
+          </button>
+          <button
+            (click)="onWeekToggleClicked({ type: 'next' })"
+            class="m-auto border hover:bg-gray-200 font-semibold border-black rounded p-2"
+          >
+            <img src="assets/right-arrow.svg" class="w-5 h-5" />
+          </button>
+        </div>
+
         <div class="m-auto">
           <span>{{ monthWithYear$ | async }}</span>
         </div>

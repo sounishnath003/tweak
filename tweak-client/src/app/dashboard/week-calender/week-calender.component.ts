@@ -1,8 +1,10 @@
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { CalendarService } from 'src/app/shared/services/calendar.service';
 import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.service';
+import { DragSropShareService } from './drag-share.service';
 
 @Component({
   selector: 'app-week-calender',
@@ -10,8 +12,9 @@ import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.ser
     <div class="my-3 p-2">
       <div class="grid-5-col">
         <div
-          *ngFor="let date of weekDays"
-          class="py-4 rounded-lg text-gray-800"
+          *ngFor="let date of weekDays; let indx = index"
+          [attr.data-index]="indx"
+          cdkDropListGroup
         >
           <div
             class="flex text-xl flex-wrap flex-row justify-between border-b-2 py-2 border-black"
@@ -24,7 +27,15 @@ import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.ser
               {{ date | date: 'EE' }}
             </div>
           </div>
-          <app-daily-todo [date]="date"></app-daily-todo>
+          <app-daily-todo
+            cdkDropList
+            [cdkDropListData]="[date]"
+            [cdkDropListConnectedTo]="generatedIds[indx]"
+            (cdkDropListDropped)="onDropped($event)"
+            [date]="date"
+            [generatedIds]="generatedIds"
+            [connectedIndex]="indx"
+          ></app-daily-todo>
           <app-add-form [date]="date"></app-add-form>
         </div>
       </div>
@@ -35,17 +46,24 @@ import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.ser
 export class WeekCalenderComponent implements OnInit {
   weekDays: Date[] = [];
   subscriptions: Array<Subscription> = [];
+  date: Date = new Date();
+  generatedIds: Array<string> = [];
 
   constructor(
     private readonly weekSchedulerService: WeekSchedulerService,
     private calendarService: CalendarService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private dragDropService: DragSropShareService
   ) {}
 
   ngOnInit(): void {
     this.registerSubscriptions(() =>
       this.calendarService.calenderWeek$.subscribe((dates) => {
         this.weekDays = [...dates];
+        this.generatedIds = [];
+        this.weekDays.forEach((week) => {
+          this.generatedIds.push(this.getUniqueId(week));
+        });
       })
     );
     this.weekSchedulerService.refreshState();
@@ -57,5 +75,13 @@ export class WeekCalenderComponent implements OnInit {
 
   private registerSubscriptions(callback: Function) {
     return this.subscriptions.push(callback());
+  }
+
+  onDropped(event: CdkDragDrop<any>) {
+    this.dragDropService.drop(event);
+  }
+
+  getUniqueId(date: Date) {
+    return `ID@${date.toDateString()}`;
   }
 }
