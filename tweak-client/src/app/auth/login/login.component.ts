@@ -133,7 +133,13 @@ export class LoginComponent implements OnInit {
     this.passwordField = this.form.get('password');
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const isAuthenticated: boolean =
+      this.authService.userAuthState.isAuthenticated;
+    if (isAuthenticated) {
+      window.location.replace('/');
+    }
+  }
 
   onSignup() {
     const { username, password } = this.form.value;
