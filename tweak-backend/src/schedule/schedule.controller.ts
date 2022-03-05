@@ -55,6 +55,11 @@ export class ScheduleController {
     return this.scheduleService.update(id, updateScheduleDto);
   }
 
+  @Patch('update-date')
+  updateDateById(@Query('id') id: string, @Body() payload: { newDate: Date }) {
+    return this.scheduleService.updateDateById(id, payload.newDate);
+  }
+
   @Delete('delete')
   remove(@Query('id') id: string) {
     return this.scheduleService.remove(id);

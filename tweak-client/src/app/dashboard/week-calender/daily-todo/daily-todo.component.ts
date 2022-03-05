@@ -15,7 +15,7 @@ import { DialoagboxComponent } from './dialoagbox/dialoagbox.component';
     <div
       cdkDropList
       [cdkDropListData]="works"
-      [cdkDropListConnectedTo]="generatedIds[connectedIndex]"
+      [cdkDropListConnectedTo]="generatedIds"
       *ngFor="let work of works; let idx = index"
       [attr.data-index]="idx"
       class="flex-col w-full flex justify-start py-2 border-b hover:border-indigo-600"
@@ -89,8 +89,6 @@ export class DailyTodoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log(this.generatedIds[this.connectedIndex]);
-
     this.weeklyScheduleService.weekSchedules$.subscribe((data) => {
       const d = data[this.date.toDateString()];
       this.works = d ? [...d] : [];

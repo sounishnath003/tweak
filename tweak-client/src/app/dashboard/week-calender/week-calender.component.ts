@@ -28,15 +28,18 @@ import { DragSropShareService } from './drag-share.service';
             </div>
           </div>
           <app-daily-todo
-            cdkDropList
-            [cdkDropListData]="[date]"
-            [cdkDropListConnectedTo]="generatedIds[indx]"
-            (cdkDropListDropped)="onDropped($event)"
             [date]="date"
             [generatedIds]="generatedIds"
             [connectedIndex]="indx"
           ></app-daily-todo>
-          <app-add-form [date]="date"></app-add-form>
+          <app-add-form
+            cdkDropList
+            [cdkDropListData]="[date]"
+            [cdkDropListConnectedTo]="generatedIds"
+            (cdkDropListDropped)="onDropped($event)"
+            [id]="getUniqueId(date)"
+            [date]="date"
+          ></app-add-form>
         </div>
       </div>
     </div>

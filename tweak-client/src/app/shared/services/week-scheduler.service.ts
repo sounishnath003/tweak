@@ -73,12 +73,12 @@ export class WeekSchedulerService implements OnDestroy {
       .pipe(shareReplay())
       .subscribe({
         next: (response: Partial<WeeklySchedulesInterface>) => {
-          this.weekScheduleMap = {}; // CLEARS OUT BUFFER
           if (response.data) {
+            this.weekScheduleMap = {}; // CLEARS OUT BUFFER
             response.data.forEach((object) => {
               this.weekScheduleMap[object.date] = [...object.schedules];
             });
-            this.weekScheduleMapSubject.next(this.weekScheduleMap);
+            this.weekScheduleMapSubject.next({ ...this.weekScheduleMap });
             console.log(`[Refreshed]: Schedules Refreshed!`);
           }
         },
@@ -95,7 +95,7 @@ export class WeekSchedulerService implements OnDestroy {
     return this.http
       .patch(
         `/api/schedules/update`,
-        { colorCode: String(colorCode), ...payload },
+        { ...payload, colorCode: String(colorCode) },
         {
           params: { id: _id as string },
         }
@@ -114,6 +114,23 @@ export class WeekSchedulerService implements OnDestroy {
       .delete(`/api/schedules/delete`, {
         params: { id: _id as string },
       })
+      .pipe(
+        share(),
+        tap(() => {
+          this.refreshState();
+        })
+      );
+  }
+
+  updateScheduleDatebyId(scheduleId: string, dateTobePushed: Date) {
+    return this.http
+      .patch(
+        `/api/schedules/update-date`,
+        { newDate: dateTobePushed },
+        {
+          params: { id: scheduleId },
+        }
+      )
       .pipe(
         share(),
         tap(() => {

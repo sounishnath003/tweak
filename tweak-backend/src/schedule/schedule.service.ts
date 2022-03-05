@@ -60,6 +60,13 @@ export class ScheduleService {
     return { data: `schedule ${id} has been updated` };
   }
 
+  async updateDateById(id: string, newDate: Date) {
+    await this.scheduleModel.findByIdAndUpdate(id, { date: newDate });
+    return {
+      data: `schedule ${id} has been updated to ${newDate}`,
+    };
+  }
+
   async remove(id: string) {
     await this.scheduleModel.findByIdAndRemove(id);
     return { data: `schedule ${id} has been removed!` };
