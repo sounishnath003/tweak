@@ -17,3 +17,8 @@
   border-color: blue;
   cursor: pointer;
 }
+
+.bg-image {
+  background: url("src/assets/auth-screen.svg");
+  /* display: table; */
+}

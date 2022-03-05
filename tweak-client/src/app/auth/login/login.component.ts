@@ -7,7 +7,6 @@ import {
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NotificationType } from 'src/app/shared/modules/notification/notification.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
@@ -15,10 +14,8 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   template: `
     <div class="m-20" fxLayout="column" fxLayoutAlign="start center">
       <div fxLayout="column" fxLayoutAlign="start center" class="my-6">
-        <h1 class="text-4xl font-semibold my-2 text-indigo-700">
-          Tweak Planner
-        </h1>
-        <div class="body-font text-indigo-900">
+        <h1 class="text-5xl font-bold my-2 text-black">Tweak Planner</h1>
+        <div class="body-font text-gray-800">
           Plan you week what we were used to those days👨🏻‍💻.
         </div>
       </div>
@@ -155,7 +152,10 @@ export class LoginComponent implements OnInit {
         const e = error.message;
         if (typeof e === 'string') {
           this.errors = [e];
-          this.snackbar.open(e, NotificationType.ERROR);
+          this.snackbar.open(e, 'Cancel', {
+            duration: 3000,
+            panelClass: ['bg-red-600', 'text-white'],
+          });
         } else {
           this.errors = [...(error.error.message || `something went wrong!`)];
         }
@@ -178,7 +178,10 @@ export class LoginComponent implements OnInit {
         const e = error.message;
         if (typeof e === 'string') {
           this.errors = [e];
-          this.snackbar.open(e, NotificationType.ERROR);
+          this.snackbar.open(e, 'Cancel', {
+            duration: 3000,
+            panelClass: ['bg-red-600', 'text-white'],
+          });
         } else {
           this.errors = [...(error.error.message || `something went wrong!`)];
         }

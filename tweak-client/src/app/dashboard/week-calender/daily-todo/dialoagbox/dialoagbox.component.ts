@@ -14,10 +14,21 @@ import { Schedule } from 'src/app/shared/utils/types.utils';
 @Component({
   selector: 'app-dialoagbox',
   template: `
+    <div fxLayout="flex-start center" fxLayoutGap="20px" class="mb-2">
+      <div
+        [class]="
+          'w-6 border border-gray-600 cursor-pointer h-6 rounded-full focus:ring-2 focus:ring-offset-2 focus:ring-black' +
+          selectedColor()
+        "
+      ></div>
+      <div class="text-2xl font-bold">
+        {{ scheduleData.date | date: 'dd.MM.YY' }}
+      </div>
+    </div>
     <form [formGroup]="formGroup">
       <div class="flex flex-row flex-wrap justify-between items-start">
         <mat-form-field>
-          <mat-label> {{ scheduleData.date | date: 'dd/MM/YYYY' }} </mat-label>
+          <mat-label> Date: </mat-label>
           <input
             formControlName="date"
             [value]="scheduleData.date"
@@ -141,7 +152,7 @@ export class DialoagboxComponent implements OnInit {
         this.dialogData.reference.closeAll();
         const snackbarRef: MatSnackBarRef<TextOnlySnackBar> =
           this.snackbar.open('Schedule has been deleted.', 'Undo', {
-            duration: 3000,
+            duration: 5000,
             panelClass: ['bg-red-600', 'text-white'],
           });
 
@@ -163,5 +174,9 @@ export class DialoagboxComponent implements OnInit {
 
   generateColor(id: number) {
     return ` ${ColorUtils.COLORS[id]}`;
+  }
+
+  selectedColor() {
+    return ` ${ColorUtils.COLORS[+this.scheduleData.colorCode]}`;
   }
 }
