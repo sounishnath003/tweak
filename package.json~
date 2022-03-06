@@ -116,8 +116,7 @@
   "scripts": {
     "dev": "concurrently -m 100 \"npm run start:client\" \"npm run start:server\"",
     "start:client": "cd tweak-client && npm run start",
-    "start:server": "cd tweak-backend && npm run start:dev",
-    "update:apps": "concurrently -m 100 \"cd tweak-client && npm update\" \"cd tweak-backend && npm update\""
+    "start:server": "cd tweak-backend && npm run start:dev"
   },
   "repository": {
     "type": "git",
