@@ -11,8 +11,11 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+  app.enableCors({
+    origin: ['http://localhost:4200'],
+  });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(1337);
+  await app.listen(process.env.PORT || 1337);
 }
 bootstrap();

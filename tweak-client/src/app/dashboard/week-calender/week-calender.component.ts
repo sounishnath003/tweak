@@ -17,13 +17,16 @@ import { DragSropShareService } from './drag-share.service';
           cdkDropListGroup
         >
           <div
-            class="flex text-xl flex-wrap flex-row justify-between border-b-2 py-2 border-black"
+            [class]="
+              'flex text-xl flex-wrap flex-row justify-between border-b-2 py-2' +
+              setTodaysColor(date)
+            "
           >
-            <div class="m-auto text-gray-800 font-semibold">
+            <div class="m-auto font-semibold">
               {{ date | date: 'dd.MM' }}
             </div>
             <div class="flex-1 m-auto"></div>
-            <div class="m-auto text-gray-400">
+            <div [class]="'m-auto' + setTodaysColorByOpacity(date)">
               {{ date | date: 'EE' }}
             </div>
           </div>
@@ -86,5 +89,19 @@ export class WeekCalenderComponent implements OnInit {
 
   getUniqueId(date: Date) {
     return `ID@${date.toDateString()}`;
+  }
+
+  setTodaysColor(date: Date) {
+    console.log(date);
+    return date.toDateString() === new Date().toDateString()
+      ? ' text-indigo-700 border-indigo-700 font-semibold'
+      : ' text-gray-800 border-black';
+  }
+
+  setTodaysColorByOpacity(date: Date) {
+    console.log(date);
+    return date.toDateString() === new Date().toDateString()
+      ? ' text-indigo-500'
+      : ' text-gray-400';
   }
 }

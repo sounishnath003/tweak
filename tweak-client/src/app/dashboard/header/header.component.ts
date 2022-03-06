@@ -39,7 +39,7 @@ import { WeekSchedulerService } from 'src/app/shared/services/week-scheduler.ser
       <div class="m-auto flex-1"></div>
 
       <div class="m-auto">
-        <button [matMenuTriggerFor]="menu">@{{ currentUsername }}</button>
+        <button [matMenuTriggerFor]="menu">@{{ currentUsername }} 👋 </button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="onLogout()">Log out</button>
         </mat-menu>
