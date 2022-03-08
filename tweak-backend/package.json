@@ -27,7 +27,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/mongoose": "^9.0.2",
     "@nestjs/passport": "^8.2.1",
-    "@nestjs/platform-fastify": "^8.3.0",
+    "@nestjs/platform-express": "^8.4.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",

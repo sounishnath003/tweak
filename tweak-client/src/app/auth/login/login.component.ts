@@ -16,7 +16,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
       <div fxLayout="column" fxLayoutAlign="start center" class="my-6">
         <h1 class="text-5xl font-bold my-2 text-black">Tweak Planner</h1>
         <div class="body-font text-gray-800">
-          Plan you week what we were used to those days👨🏻‍💻.
+          Plan your week what we were used to those days👨🏻‍💻.
         </div>
       </div>
       <form
