@@ -9,6 +9,7 @@ import {
   Subscription,
   tap,
 } from 'rxjs';
+import { environment } from 'src/environments/environment.prod';
 import { Schedule, WeeklySchedulesInterface } from '../utils/types.utils';
 import { AuthService } from './auth.service';
 import { CalendarService } from './calendar.service';

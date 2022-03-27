@@ -6,7 +6,12 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: ['http://localhost:4200' ],
+    origin: [
+      'http://127.0.0.1:4200',
+      'http://localhost:4200',
+      'https://epic-bhaskara-c90297.netlify.app',
+      'http://epic-bhaskara-c90297.netlify.app',
+    ],
   });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());

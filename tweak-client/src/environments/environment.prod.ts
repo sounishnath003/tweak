@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  BACKEND_URI: `https://tweak-planner-backend.herokuapp.com`,
 };

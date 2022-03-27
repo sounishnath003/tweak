@@ -8,6 +8,7 @@ import {
   tap,
 } from 'rxjs';
 import { handleError } from 'src/app/shared/utils/error-handle.utils';
+import { environment } from 'src/environments/environment';
 
 export type AuthState = {
   accessToken: string;

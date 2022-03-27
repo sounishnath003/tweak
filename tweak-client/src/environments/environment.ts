@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  BACKEND_URI: `http://localhost:1337`,
+  // BACKEND_URI: `https://tweak-planner-backend.herokuapp.com`,
 };
 
 /*
